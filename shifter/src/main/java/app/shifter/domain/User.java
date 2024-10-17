@@ -40,10 +40,10 @@ public class User {
         this.employee = employee;
     }
 
-    public Long getUserid() {
+    public Long getUserId() {
         return userid;
     }
-    public void setUserid(Long userid) {
+    public void setUserId(Long userid) {
         this.userid = userid;
     }
     public String getUsername() {
