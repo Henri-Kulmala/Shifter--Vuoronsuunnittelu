@@ -4,6 +4,8 @@ package app.shifter.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,8 +25,13 @@ public class Shifts {
 
     private String workstation;
     private String shiftName;
+
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime startTime;
+
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime endTime;
+
 
     @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL)
     private List<Breaks> breaks;

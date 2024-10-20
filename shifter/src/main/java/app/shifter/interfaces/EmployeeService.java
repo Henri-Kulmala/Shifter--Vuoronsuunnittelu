@@ -10,6 +10,6 @@ public interface EmployeeService {
     Employee getEmployeeById(Long id);
     Employee updateEmployee(Long id, Employee employee);
     void deleteEmployee(Long id);
-    Employee getEmployeeByFullName(String fullName);
+    Employee getEmployeeByFullName(String firstName, String lastName);
 
 }

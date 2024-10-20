@@ -8,7 +8,7 @@ import app.shifter.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    User findByUserName(String userName);
+    User findByUsername(String username);
     
 
 }

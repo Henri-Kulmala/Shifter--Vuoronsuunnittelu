@@ -2,6 +2,8 @@ package app.shifter.domain;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,13 +21,15 @@ public class Breaks {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long breakId;
 
-    @Column(name = "break_type", nullable = false)
+    @Column(name = "break_type")
     private String breakType;
 
-    @Column(name = "break_start", nullable = false)
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @Column(name = "break_start")
     private LocalDateTime breakStart;
-
-    @Column(name = "break_end", nullable = false)
+    
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @Column(name = "break_end")
     private LocalDateTime breakEnd;
 
     @ManyToOne

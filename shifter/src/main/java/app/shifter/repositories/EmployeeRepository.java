@@ -8,7 +8,7 @@ import app.shifter.domain.Employee;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    Employee findByFullName(String fullName);
+    Employee findByFirstNameAndLastName(String firstName, String lastName);
     
 
 }

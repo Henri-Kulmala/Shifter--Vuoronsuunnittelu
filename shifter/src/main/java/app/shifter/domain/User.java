@@ -31,7 +31,7 @@ public class User {
 
     public User() {}
 
-    public User(Long userid, String username, String passwordHash, Boolean admin, Employee employee) {
+    public User(Long userid, String username, String passwordHash, Boolean admin, Employee employee, Long employeeId) {
 
         this.userid = userid;
         this.username = username;
@@ -71,6 +71,7 @@ public class User {
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
+
 
 
 }
