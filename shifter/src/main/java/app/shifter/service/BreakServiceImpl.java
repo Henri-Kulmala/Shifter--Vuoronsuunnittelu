@@ -29,6 +29,14 @@ public class BreakServiceImpl implements BreakService {
         return breaksRepository.findByBreakId(breakId);
     }
 
+    public List<Breaks> findByBreakType(String breakType) {
+        List<Breaks> breaks = breaksRepository.findByBreakType(breakType);
+        if (breaks.isEmpty()) {
+            throw new RuntimeException("Breaks with the type name " + breakType + " not found");
+        }
+        return breaks;
+    }
+
     @Override
     public void deleteBreaks(Long breakId) {
         breaksRepository.deleteById(breakId);

@@ -43,7 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee getEmployeeByFullName(String fullName) {
-        return employeeRepository.findByFullName(fullName);
+    public Employee getEmployeeByFullName(String firstName, String lastName) {
+        return employeeRepository.findByFirstNameAndLastName(firstName, lastName);
     }
 }
