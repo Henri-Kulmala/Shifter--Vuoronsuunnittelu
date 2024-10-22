@@ -9,6 +9,7 @@ import app.shifter.service.EmployeeServiceImpl;
 import app.shifter.interfaces.UserService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -53,4 +54,10 @@ public class UserController {
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
+
+    @PatchMapping("/{id}")
+    public User patchUser(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        return userService.patchUser(id, updates);
+    }
+
 }

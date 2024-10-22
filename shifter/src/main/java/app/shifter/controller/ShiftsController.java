@@ -1,5 +1,6 @@
 package app.shifter.controller;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class ShiftsController {
         return shiftService.getAllShifts();
     }
 
+
     @GetMapping("/{id}")
     public Shifts getShiftById(@PathVariable Long id) {
         return shiftService.getShiftById(id);
@@ -39,4 +41,9 @@ public class ShiftsController {
     public void deleteShift(@PathVariable Long id) {
         shiftService.deleteShift(id);
     }
+
+    @PatchMapping("/{id}")
+    public Shifts patchShift(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    return shiftService.patchShift(id, updates);
+}
 }

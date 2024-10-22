@@ -1,13 +1,15 @@
 package app.shifter.domain;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,7 +19,6 @@ import jakarta.persistence.OneToMany;
 
 @Entity
 public class Shifts {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,19 +33,27 @@ public class Shifts {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime endTime;
 
+    // Stores multiple breaks for this shift
+    @ElementCollection
+    private List<Break> breaks;
 
-    @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL)
-    private List<Breaks> breaks;
-
-    @ManyToOne
+    // The employee assigned to this shift
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
-    
 
+    // This shift is covering breaks of another shift
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "covering_shift_id")
+    private Shifts coveringShift;
+    
+    // The shifts whose breaks are covered by this shift
+    @OneToMany(mappedBy = "coveringShift", cascade = CascadeType.ALL)
+    private List<Shifts> coveredBreaks;
+        
     public Shifts() {}
 
-    public Shifts(Long shiftid, String workstation, String shiftName, LocalDateTime startTime, LocalDateTime endTime, List<Breaks> breaks, Employee employee) {
-
+    public Shifts(Long shiftid, String workstation, String shiftName, LocalDateTime startTime, LocalDateTime endTime, List<Break> breaks, Employee employee) {
         this.shiftid = shiftid;
         this.workstation = workstation;
         this.shiftName = shiftName;
@@ -94,11 +103,11 @@ public class Shifts {
         this.endTime = endTime;
     }
     
-    public List<Breaks> getBreaks() {
+    public List<Break> getBreaks() {
         return breaks;
     }
     
-    public void setBreaks(List<Breaks> breaks) {
+    public void setBreaks(List<Break> breaks) {
         this.breaks = breaks;
     }
     
@@ -110,7 +119,22 @@ public class Shifts {
         this.employee = employee;
     }
 
+    public Shifts getCoveringShift() {
+        return coveringShift;
+    }
 
+    public void setCoveringShift(Shifts coveringShift) {
+        this.coveringShift = coveringShift;
+    }
 
+    public List<Shifts> getCoveredBreaks() {
+        return coveredBreaks;
+    }
 
+    public void setCoveredBreaks(List<Shifts> coveredBreaks) {
+        this.coveredBreaks = coveredBreaks;
+    }
 }
+
+
+

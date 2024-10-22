@@ -1,6 +1,9 @@
 package app.shifter.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import app.shifter.domain.Employee;
@@ -45,5 +48,36 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee getEmployeeByFullName(String firstName, String lastName) {
         return employeeRepository.findByFirstNameAndLastName(firstName, lastName);
+    }
+
+     @Override
+    public Employee patchEmployee(Long employeeId, Map<String, Object> updates) {
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+        if (!optionalEmployee.isPresent()) {
+            throw new RuntimeException("Employee not found");
+        }
+
+        Employee existingEmployee = optionalEmployee.get();
+
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "firstName":
+                    existingEmployee.setFirstName((String) value);
+                    break;
+                case "lastName":
+                    existingEmployee.setLastName((String) value);
+                    break;
+                case "qualification":
+                    existingEmployee.setQualification((Boolean) value);
+                    break;
+                case "notes":
+                    existingEmployee.setNotes((String) value);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid field: " + key);
+            }
+        });
+
+        return employeeRepository.save(existingEmployee);
     }
 }

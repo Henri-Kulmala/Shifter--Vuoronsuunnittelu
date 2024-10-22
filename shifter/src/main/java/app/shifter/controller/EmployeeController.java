@@ -6,6 +6,7 @@ import app.shifter.domain.Employee;
 import app.shifter.interfaces.EmployeeService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -38,4 +39,10 @@ public class EmployeeController {
     public void deleteEmployee(@PathVariable Long id) {
         employeeService.deleteEmployee(id);
     }
+
+    @PatchMapping("/{id}")
+    public Employee patchEmployee(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        return employeeService.patchEmployee(id, updates);
+    }
+
 }
