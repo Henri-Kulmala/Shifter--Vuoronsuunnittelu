@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ShifterApplication<shifter>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "app.shifter.ShifterApplication",
+            "projectName": "shifter",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
