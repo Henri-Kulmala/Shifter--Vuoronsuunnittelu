@@ -1,10 +1,23 @@
 package app.shifter.DTOs;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class EmployeeDTO {
 
     private Long employeeId;
+
+    @NotBlank(message = "Declare the employee's first name")
+    @Column(nullable = false)
     private String firstName;
+
+    @NotBlank(message = "Declare the employee's last name")
+    @Column(nullable = false)
     private String lastName;
+
+    @NotNull(message = "This field cannot be null (qualification => TRUE / FALSE)")
+    @Column(nullable = false)
     private Boolean qualification;
     private String notes;
 

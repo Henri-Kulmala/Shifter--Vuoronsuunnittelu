@@ -5,16 +5,29 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+
 public class ShiftDTO {
 
     private Long shiftId;
+
+    @NotBlank(message = "Please declare the shift's name")
+    @Column(nullable = false)
     private String shiftName;
+
+    @NotBlank(message = "Please declare the shift's workstation")
+    @Column(nullable = false)
     private String workstation;
     
+    @NotBlank(message = "Please declare the shift's start time")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @Column(nullable = false)
     private LocalDateTime startTime;
 
+    @NotBlank(message = "Please declare the shift's end time")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @Column(nullable = false)
     private LocalDateTime endTime;
 
     private List<BreakDTO> breaks;  

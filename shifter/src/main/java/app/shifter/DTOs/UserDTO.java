@@ -1,13 +1,28 @@
 package app.shifter.DTOs;
 
-
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class UserDTO {
 
     private Long userId;
+
+    @NotBlank(message = "Please enter an username")
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @NotNull(message = "This field cannot be null (admin => TRUE / FALSE)")
+    @Column(nullable = false)
     private Boolean admin;
+
+    @NotBlank(message = "Please declare an employee")
+    @OneToOne
     private EmployeeDTO employee;
+
+    @NotNull(message = "Please enter a password")
+    @Column(nullable = false, unique = true)
     private String password;
 
     public UserDTO() {}

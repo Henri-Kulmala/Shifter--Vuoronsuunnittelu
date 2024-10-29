@@ -4,13 +4,21 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+
+
 public class BreakDTO {
 
+    @NotBlank(message= "Declare a breaktype (Kahvitauko / Ruokatauko)")
+    @Column(nullable = false)
     private String breakType;
 
+    @NotBlank (message = "Starting time of break cannot be empty")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime breakStart;
 
+    @NotBlank (message = "End time for break cannot be empty")
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime breakEnd;
 
