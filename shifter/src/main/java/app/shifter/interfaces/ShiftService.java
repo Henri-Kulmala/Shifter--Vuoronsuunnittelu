@@ -4,18 +4,18 @@ import java.util.List;
 
 import java.util.Map;
 
-import app.shifter.domain.Break;
-import app.shifter.domain.Shifts;
+import app.shifter.DTOs.BreakDTO;
+import app.shifter.DTOs.ShiftDTO;
 import java.time.LocalDateTime;
 
 public interface ShiftService {
-    Shifts createShift(Shifts shift);
-    List<Shifts> getAllShifts();
-    Shifts getShiftById(Long shiftId);
-    Shifts updateShifts(Long shiftId, Shifts shift);
+    ShiftDTO createShift(ShiftDTO shift);
+    List<ShiftDTO> getAllShifts();
+    ShiftDTO getShiftById(Long shiftId);
+    ShiftDTO updateShifts(Long shiftId, ShiftDTO shift);
     void deleteShift(Long shiftId);
-    Shifts patchShift(Long shiftId, Map<String, Object> updates);
-    List<Break> calculateBreaks(LocalDateTime startTime, LocalDateTime endTime);
+    ShiftDTO patchShift(Long shiftId, Map<String, Object> updates);
+    List<BreakDTO> calculateBreaks(LocalDateTime startTime, LocalDateTime endTime);
 
 
 }

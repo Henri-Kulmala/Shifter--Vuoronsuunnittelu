@@ -3,16 +3,14 @@ package app.shifter.interfaces;
 import java.util.List;
 import java.util.Map;
 
-
-import app.shifter.domain.Employee;
+import app.shifter.DTOs.EmployeeDTO;
 
 public interface EmployeeService {
-    Employee createEmployee(Employee employee);
-    List<Employee> getAllEmployees();
-    Employee getEmployeeById(Long id);
-    Employee updateEmployee(Long id, Employee employee);
+    EmployeeDTO createEmployee(EmployeeDTO employeeDTO);
+    List<EmployeeDTO> getAllEmployees();
+    EmployeeDTO getEmployeeById(Long id);
+    EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO);
     void deleteEmployee(Long id);
-    Employee getEmployeeByFullName(String firstName, String lastName);
-    Employee patchEmployee(Long employeeId, Map<String, Object> updates);
-
+    EmployeeDTO getEmployeeByFullName(String firstName, String lastName);
+    EmployeeDTO patchEmployee(Long employeeId, Map<String, Object> updates);
 }

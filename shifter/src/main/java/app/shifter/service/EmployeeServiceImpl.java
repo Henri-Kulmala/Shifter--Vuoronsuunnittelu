@@ -3,11 +3,14 @@ package app.shifter.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import app.shifter.DTOs.EmployeeDTO;
 import app.shifter.domain.Employee;
 import app.shifter.interfaces.EmployeeService;
+import app.shifter.mappers.EmployeeMapper;
 import app.shifter.repositories.EmployeeRepository;
 
 @Service
@@ -16,42 +19,70 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private EmployeeMapper employeeMapper; 
+
     @Override
-    public Employee createEmployee(Employee employee) {
-        return employeeRepository.save(employee);
+    public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
+        
+        Employee employee = employeeMapper.employeeDTOToEmployee(employeeDTO);
+        
+        Employee savedEmployee = employeeRepository.save(employee);
+       
+        return employeeMapper.employeeToEmployeeDTO(savedEmployee);
     }
 
     @Override
-    public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeDTO> getAllEmployees() {
+        
+        return employeeRepository.findAll()
+                .stream()
+                .map(employeeMapper::employeeToEmployeeDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Employee getEmployeeById(Long id) {
-        return employeeRepository.findById(id).orElse(null);
+    public EmployeeDTO getEmployeeById(Long id) {
+       
+        return employeeRepository.findById(id)
+                .map(employeeMapper::employeeToEmployeeDTO)
+                .orElse(null); 
     }
 
     @Override
-    public Employee updateEmployee(Long id, Employee employee) {
+    public EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO) {
+       
         if (employeeRepository.existsById(id)) {
-            employee.setEmployeeId(id); 
-            return employeeRepository.save(employee);
+            
+            Employee employee = employeeMapper.employeeDTOToEmployee(employeeDTO);
+            employee.setEmployeeId(id);
+            
+            Employee updatedEmployee = employeeRepository.save(employee);
+            return employeeMapper.employeeToEmployeeDTO(updatedEmployee);
         }
         return null;
     }
 
     @Override
     public void deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
+        if (employeeRepository.existsById(id)) {
+            employeeRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Employee not found");
+        }
     }
 
     @Override
-    public Employee getEmployeeByFullName(String firstName, String lastName) {
-        return employeeRepository.findByFirstNameAndLastName(firstName, lastName);
+    public EmployeeDTO getEmployeeByFullName(String firstName, String lastName) {
+        
+        return employeeMapper.employeeToEmployeeDTO(
+            employeeRepository.findByFirstNameAndLastName(firstName, lastName)
+        );
     }
 
-     @Override
-    public Employee patchEmployee(Long employeeId, Map<String, Object> updates) {
+    @Override
+    public EmployeeDTO patchEmployee(Long employeeId, Map<String, Object> updates) {
+        
         Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
         if (!optionalEmployee.isPresent()) {
             throw new RuntimeException("Employee not found");
@@ -59,6 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee existingEmployee = optionalEmployee.get();
 
+        
         updates.forEach((key, value) -> {
             switch (key) {
                 case "firstName":
@@ -78,6 +110,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
         });
 
-        return employeeRepository.save(existingEmployee);
+        
+        Employee updatedEmployee = employeeRepository.save(existingEmployee);
+        return employeeMapper.employeeToEmployeeDTO(updatedEmployee);
     }
 }

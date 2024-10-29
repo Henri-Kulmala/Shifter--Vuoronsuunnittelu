@@ -2,48 +2,57 @@ package app.shifter.controller;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import app.shifter.domain.Shifts;
+import app.shifter.DTOs.ShiftDTO;
 import app.shifter.interfaces.ShiftService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/shifts")
-public class ShiftsController {
+public class ShiftController {
 
+
+    // Tuodaan service-luokasta tarvittavat toiminnallisuudet endpointteja varten
+    
     @Autowired
     private ShiftService shiftService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public Shifts createShift(@RequestBody Shifts shift) {
+    public ShiftDTO createShift(@RequestBody ShiftDTO shift) {
         return shiftService.createShift(shift);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
-    public List<Shifts> getAllShifts() {
+    public List<ShiftDTO> getAllShifts() {
         return shiftService.getAllShifts();
     }
 
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{id}")
-    public Shifts getShiftById(@PathVariable Long id) {
+    public ShiftDTO getShiftById(@PathVariable Long id) {
         return shiftService.getShiftById(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public Shifts updateShifts(@PathVariable Long id, Shifts shift) {
+    public ShiftDTO updateShifts(@PathVariable Long id, ShiftDTO shift) {
         return shiftService.updateShifts(id, shift);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteShift(@PathVariable Long id) {
         shiftService.deleteShift(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
-    public Shifts patchShift(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ShiftDTO patchShift(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
     return shiftService.patchShift(id, updates);
 }
 }

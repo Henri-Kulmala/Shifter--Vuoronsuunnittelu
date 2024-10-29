@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class User {
@@ -14,16 +16,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userid;
 
-
-   @Column(nullable = false, unique = true)
+    @NotBlank(message = "Please enter an username")
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
+    // Entiteetissä salasana näkyy oikeana - DTO:ssa käytetty encoderia
+    @NotBlank(message = "Please enter a password")
+    @Column(nullable = false, unique = true)
     private String passwordHash;
 
+    @NotNull(message = "This field cannot be null (admin => TRUE / FALSE)")
     @Column(nullable = false)
     private Boolean admin;
 
+
+    // Haetaan työntekijätiedot käyttäjän luomiseksi
+    @NotBlank(message = "Please declare an employee")
     @OneToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;

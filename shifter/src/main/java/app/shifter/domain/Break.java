@@ -1,12 +1,30 @@
 package app.shifter.domain;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
 
 @Embeddable
 public class Break {
+
+    @NotBlank(message= "Declare a breaktype (Kahvitauko / Ruokatauko)")
+    @Column(nullable = false)
     private String breakType;
+
+
+    // Muutetaan LocalDateTime käytännöllisempään muotoon
+    @NotBlank (message = "Starting time of break cannot be empty")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @Column(nullable = false)
     private LocalDateTime breakStart;
+
+    @NotBlank (message = "End time for break cannot be empty")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @Column(nullable = false)
     private LocalDateTime breakEnd;
 
     public Break() {}
