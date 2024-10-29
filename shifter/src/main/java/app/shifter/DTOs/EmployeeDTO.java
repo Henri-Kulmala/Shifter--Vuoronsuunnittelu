@@ -1,24 +1,13 @@
-package app.shifter.domain;
+package app.shifter.DTOs;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+public class EmployeeDTO {
 
-@Entity
-@Table(name = "employee")
-public class Employee {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
 
-    // Valuation
     @NotBlank(message = "Declare the employee's first name")
     @Column(nullable = false)
     private String firstName;
@@ -30,13 +19,11 @@ public class Employee {
     @NotNull(message = "This field cannot be null (qualification => TRUE / FALSE)")
     @Column(nullable = false)
     private Boolean qualification;
-
     private String notes;
 
+    public EmployeeDTO() {}
 
-    public Employee() {}
-
-    public Employee(String firstName, String lastName, Boolean qualification, String notes) {
+    public EmployeeDTO(Long employeeId, String firstName, String lastName, Boolean qualification, String notes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.qualification = qualification;
@@ -80,6 +67,5 @@ public class Employee {
     public void setQualification(Boolean qualification) {
         this.qualification = qualification;
     }
-
 
 }

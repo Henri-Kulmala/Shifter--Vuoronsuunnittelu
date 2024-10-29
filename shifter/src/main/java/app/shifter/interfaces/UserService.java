@@ -2,14 +2,17 @@ package app.shifter.interfaces;
 
 import java.util.List;
 
-import app.shifter.domain.User;
+import java.util.Map;
+
+import app.shifter.DTOs.UserDTO;
 
 public interface UserService {
 
-    User createUser(User user);
-    List<User> getAllUsers();
-    User getUserById(Long userId);
-    User getUserByUserName(String userName);
-    User updateUser(Long userId, User user);
+    UserDTO createUser(UserDTO user, String password);
+    List<UserDTO> getAllUsers();
+    UserDTO getUserById(Long userId);
+    UserDTO getUserByUserName(String userName);
+    UserDTO updateUser(Long userId, UserDTO user, String password);
     void deleteUser(Long userId);
+    UserDTO patchUser(Long userId, Map<String, Object> updates);
 }
