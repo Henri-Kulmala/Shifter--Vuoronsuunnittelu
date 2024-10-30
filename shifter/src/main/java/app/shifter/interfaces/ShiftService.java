@@ -6,7 +6,7 @@ import java.util.Map;
 
 import app.shifter.DTOs.BreakDTO;
 import app.shifter.DTOs.ShiftDTO;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public interface ShiftService {
     ShiftDTO createShift(ShiftDTO shift);
@@ -15,7 +15,7 @@ public interface ShiftService {
     ShiftDTO updateShifts(Long shiftId, ShiftDTO shift);
     void deleteShift(Long shiftId);
     ShiftDTO patchShift(Long shiftId, Map<String, Object> updates);
-    List<BreakDTO> calculateBreaks(LocalDateTime startTime, LocalDateTime endTime);
+    List<BreakDTO> calculateBreaks(LocalTime startTime, LocalTime endTime);
 
 
 }

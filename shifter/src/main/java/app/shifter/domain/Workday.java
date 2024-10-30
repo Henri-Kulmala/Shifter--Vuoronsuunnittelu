@@ -1,14 +1,8 @@
 package app.shifter.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-
+import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +15,10 @@ public class Workday {
 
     @Column(nullable = false)
     private LocalDate date;
-    
+
+    @Transient 
+    private DayOfWeek dayOfWeek;
+
     @OneToMany(mappedBy = "workday", cascade = CascadeType.ALL)
     private List<Shift> shifts = new ArrayList<>();
 
@@ -29,7 +26,17 @@ public class Workday {
 
     public Workday(LocalDate date) {
         this.date = date;
+        this.dayOfWeek = date.getDayOfWeek(); 
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 
     public LocalDate getDate() {
         return date;
@@ -38,13 +45,22 @@ public class Workday {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-    
+
+    public DayOfWeek getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(DayOfWeek dayOfWeek) {
+        this.dayOfWeek = date.getDayOfWeek(); 
+    }
+
     public List<Shift> getShifts() {
         return shifts;
     }
-    
+
     public void setShifts(List<Shift> shifts) {
         this.shifts = shifts;
     }
+
 
 }

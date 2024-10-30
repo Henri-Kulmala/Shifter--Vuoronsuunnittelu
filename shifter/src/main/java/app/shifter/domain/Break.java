@@ -1,6 +1,6 @@
 package app.shifter.domain;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -16,20 +16,19 @@ public class Break {
     private String breakType;
 
 
-    // Muutetaan LocalDateTime käytännöllisempään muotoon
     @NotBlank (message = "Starting time of break cannot be empty")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime breakStart;
+    private LocalTime breakStart;
 
     @NotBlank (message = "End time for break cannot be empty")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime breakEnd;
+    private LocalTime breakEnd;
 
     public Break() {}
 
-    public Break(String breakType, LocalDateTime breakStart, LocalDateTime breakEnd) {
+    public Break(String breakType, LocalTime breakStart, LocalTime breakEnd) {
         this.breakType = breakType;
         this.breakStart = breakStart;
         this.breakEnd = breakEnd;
@@ -43,19 +42,19 @@ public class Break {
         this.breakType = breakType;
     }
 
-    public LocalDateTime getBreakStart() {
+    public LocalTime getBreakStart() {
         return breakStart;
     }
 
-    public void setBreakStart(LocalDateTime breakStart) {
+    public void setBreakStart(LocalTime breakStart) {
         this.breakStart = breakStart;
     }
 
-    public LocalDateTime getBreakEnd() {
+    public LocalTime getBreakEnd() {
         return breakEnd;
     }
 
-    public void setBreakEnd(LocalDateTime breakEnd) {
+    public void setBreakEnd(LocalTime breakEnd) {
         this.breakEnd = breakEnd;
     }
 }

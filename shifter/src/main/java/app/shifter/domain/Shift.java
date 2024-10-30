@@ -1,6 +1,6 @@
 package app.shifter.domain;
 
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -34,14 +34,14 @@ public class Shift {
     private String shiftName;
     
     @NotBlank(message = "Please declare the shift's start time")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @NotBlank(message = "Please declare the shift's end time")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     // Sisältää listan taukoja, joita voi hyödyntää tässä luokassa
     @ElementCollection
@@ -71,7 +71,7 @@ public class Shift {
         
     public Shift() {}
 
-    public Shift(Long shiftid, String workstation, String shiftName, LocalDateTime startTime, LocalDateTime endTime, List<Break> breaks, Employee employee, Workday workday) {
+    public Shift(Long shiftid, String workstation, String shiftName, LocalTime startTime, LocalTime endTime, List<Break> breaks, Employee employee, Workday workday) {
         this.shiftid = shiftid;
         this.workstation = workstation;
         this.shiftName = shiftName;
@@ -106,19 +106,19 @@ public class Shift {
         this.shiftName = shiftName;
     }
     
-    public LocalDateTime getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
     
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
     
-    public LocalDateTime getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
     
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
     

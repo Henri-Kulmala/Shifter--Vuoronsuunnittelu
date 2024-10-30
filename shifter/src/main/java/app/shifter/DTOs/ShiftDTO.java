@@ -1,12 +1,13 @@
 package app.shifter.DTOs;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
+import app.shifter.DTOs.EmployeeDTO;
 
 public class ShiftDTO {
 
@@ -21,23 +22,23 @@ public class ShiftDTO {
     private String workstation;
     
     @NotBlank(message = "Please declare the shift's start time")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @NotBlank(message = "Please declare the shift's end time")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     private List<BreakDTO> breaks;  
-    private EmployeeDTO employee;  
+    private EmployeeDTO employee;   
     private ShiftDTO coveringShift;  
     private List<ShiftDTO> coveredBreaks;  
 
     public ShiftDTO() {}
 
-    public ShiftDTO(Long shiftId, String shiftName, String workstation, LocalDateTime startTime, LocalDateTime endTime, List<BreakDTO> breaks, EmployeeDTO employee, ShiftDTO coveringShift, List<ShiftDTO> coveredBreaks) {
+    public ShiftDTO(Long shiftId, String shiftName, String workstation, LocalTime startTime, LocalTime endTime, List<BreakDTO> breaks, EmployeeDTO employee, ShiftDTO coveringShift, List<ShiftDTO> coveredBreaks) {
         this.shiftId = shiftId;
         this.shiftName = shiftName;
         this.workstation = workstation;
@@ -74,19 +75,19 @@ public class ShiftDTO {
         this.workstation = workstation;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 
