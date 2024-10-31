@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 
 @Embeddable
@@ -15,16 +16,18 @@ public class Break {
     @Column(nullable = false)
     private String breakType;
 
-
-    @NotBlank (message = "Starting time of break cannot be empty")
+    @NotBlank(message = "Starting time of break cannot be empty")
     @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
     private LocalTime breakStart;
 
-    @NotBlank (message = "End time for break cannot be empty")
+    @NotBlank(message = "End time for break cannot be empty")
     @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
     private LocalTime breakEnd;
+
+    @ManyToOne
+    private Employee coverEmployee;
 
     public Break() {}
 
@@ -56,5 +59,13 @@ public class Break {
 
     public void setBreakEnd(LocalTime breakEnd) {
         this.breakEnd = breakEnd;
+    }
+
+    public Employee getCoverEmployee() {
+        return coverEmployee;
+    }
+
+    public void setCoverEmployee(Employee coverEmployee) {
+        this.coverEmployee = coverEmployee;
     }
 }

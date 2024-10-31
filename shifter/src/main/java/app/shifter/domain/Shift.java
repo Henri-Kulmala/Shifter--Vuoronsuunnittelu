@@ -43,29 +43,23 @@ public class Shift {
     @Column(nullable = false)
     private LocalTime endTime;
 
+    
+    @NotBlank(message = "A shift must have it's employee stated")
+    @ManyToOne(fetch = FetchType.LAZY) 
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee employee;
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workday_id")
+    private Workday workday;
+
+
     // Sisältää listan taukoja, joita voi hyödyntää tässä luokassa
     @ElementCollection
     private List<Break> breaks;
 
     // Tälle vuorolle määrätty työntekijä
-
-    @NotBlank(message = "A shift must have it's employee stated")
-    @ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "employee_id", nullable = false)
-    private Employee employee;
-
-    // Tämän vuoron ja työntekijän tekemät taukopaikkaukset 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "covering_shift_id")
-    private Shift coveringShift;
-    
-    // Pohdi vielä toimintalogiikkaa lisää
-    @OneToMany(mappedBy = "coveringShift", cascade = CascadeType.ALL)
-    private List<Shift> coveredBreaks;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workday_id")
-    private Workday workday;
 
     
         
@@ -138,21 +132,6 @@ public class Shift {
         this.employee = employee;
     }
 
-    public Shift getCoveringShift() {
-        return coveringShift;
-    }
-
-    public void setCoveringShift(Shift coveringShift) {
-        this.coveringShift = coveringShift;
-    }
-
-    public List<Shift> getCoveredBreaks() {
-        return coveredBreaks;
-    }
-
-    public void setCoveredBreaks(List<Shift> coveredBreaks) {
-        this.coveredBreaks = coveredBreaks;
-    }
 
     public Workday getWorkday() {
         return workday;

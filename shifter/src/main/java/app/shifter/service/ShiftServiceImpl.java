@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import app.shifter.DTOs.ShiftDTO;
 import app.shifter.DTOs.BreakDTO;
 import app.shifter.DTOs.EmployeeDTO;
+import app.shifter.domain.Break;
 import app.shifter.domain.Employee;
 import app.shifter.domain.Shift;
 import app.shifter.exceptionHandling.Exceptions.NotQualifiedException;
@@ -51,17 +52,21 @@ public class ShiftServiceImpl implements ShiftService {
     @Override
     public ShiftDTO createShift(ShiftDTO shiftDTO) {
         Long employeeId = shiftDTO.getEmployee().getEmployeeId();
-
+    
         Employee employee = employeeRepository.findById(employeeId)
             .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
-
+    
         validateQualification(employee, shiftDTO.getWorkstation());
-
+    
         Shift shift = shiftMapper.shiftDTOToShift(shiftDTO);
         shift.setEmployee(employee);
-
+    
+        // Calculate and set initial breaks
+        List<BreakDTO> calculatedBreaks = calculateBreaks(shiftDTO.getStartTime(), shiftDTO.getEndTime());
+        shift.setBreaks(breakMapper.breakDTOListToBreakList(calculatedBreaks));
+    
         Shift savedShift = shiftRepository.save(shift);
-
+    
         return shiftMapper.shiftToShiftDTO(savedShift);
     }
 
@@ -171,27 +176,26 @@ public class ShiftServiceImpl implements ShiftService {
                         newBreak.setBreakType((String) breakData.get("breakType"));
                         newBreak.setBreakStart(LocalTime.parse((String) breakData.get("breakStart"), timeFormatter));
                         newBreak.setBreakEnd(LocalTime.parse((String) breakData.get("breakEnd"), timeFormatter));
+
+                        // Set breakCoverEmployee based on provided ID
+                        if (breakData.containsKey("breakCoverEmployee")) {
+                            Long breakCoverEmployeeId = Long.parseLong(breakData.get("breakCoverEmployee").toString());
+                            Employee breakCoverEmployee = employeeRepository.findById(breakCoverEmployeeId)
+                                .orElseThrow(() -> new RuntimeException("Cover employee not found"));
+                            newBreak.setBreakCoverEmployee(breakCoverEmployee.getFullName());
+                        }
+
                         updatedBreaks.add(newBreak);
                     }
 
+                    // Map the updated breaks to the shift
                     existingShift.setBreaks(breakMapper.breakDTOListToBreakList(updatedBreaks));
                     break;
                 case "employee":
-                    @SuppressWarnings("unchecked") Map<String, Object> employeeData = (Map<String, Object>) value;
-                    Long employeeId = Long.parseLong(employeeData.get("employeeId").toString());
-                    EmployeeDTO employeeDTO = employeeService.getEmployeeById(employeeId);
-                    if (employeeDTO != null) {
-                        existingShift.setEmployee(employeeMapper.employeeDTOToEmployee(employeeDTO));
-                    }
-                    break;
-                case "coveringShift":
-                    Long coveringShiftId = Long.parseLong(value.toString());
-                    Optional<Shift> coveringShift = shiftRepository.findById(coveringShiftId);
-                    if (coveringShift.isPresent()) {
-                        existingShift.setCoveringShift(coveringShift.get());
-                    } else {
-                        throw new RuntimeException("Covering shift not found");
-                    }
+                    @SuppressWarnings("unchecked") Long employeeId = Long.parseLong(((Map<String, Object>) value).get("employeeId").toString());
+                    Employee employee = employeeRepository.findById(employeeId)
+                        .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
+                    existingShift.setEmployee(employee);
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid field: " + key);
@@ -201,4 +205,7 @@ public class ShiftServiceImpl implements ShiftService {
         Shift updatedShift = shiftRepository.save(existingShift);
         return shiftMapper.shiftToShiftDTO(updatedShift);
     }
+
+   
+
 }

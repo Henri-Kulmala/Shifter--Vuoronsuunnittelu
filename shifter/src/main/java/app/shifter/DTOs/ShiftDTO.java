@@ -7,11 +7,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
-import app.shifter.DTOs.EmployeeDTO;
 
 public class ShiftDTO {
 
     private Long shiftId;
+
+    private EmployeeDTO employee; 
 
     @NotBlank(message = "Please declare the shift's name")
     @Column(nullable = false)
@@ -32,9 +33,7 @@ public class ShiftDTO {
     private LocalTime endTime;
 
     private List<BreakDTO> breaks;  
-    private EmployeeDTO employee;   
-    private ShiftDTO coveringShift;  
-    private List<ShiftDTO> coveredBreaks;  
+    
 
     public ShiftDTO() {}
 
@@ -46,8 +45,6 @@ public class ShiftDTO {
         this.endTime = endTime;
         this.breaks = breaks;
         this.employee = employee;
-        this.coveringShift = coveringShift;
-        this.coveredBreaks = coveredBreaks;
     }
 
     
@@ -107,19 +104,4 @@ public class ShiftDTO {
         this.employee = employee;
     }
 
-    public ShiftDTO getCoveringShift() {
-        return coveringShift;
-    }
-
-    public void setCoveringShift(ShiftDTO coveringShift) {
-        this.coveringShift = coveringShift;
-    }
-
-    public List<ShiftDTO> getCoveredBreaks() {
-        return coveredBreaks;
-    }
-
-    public void setCoveredBreaks(List<ShiftDTO> coveredBreaks) {
-        this.coveredBreaks = coveredBreaks;
-    }
 }

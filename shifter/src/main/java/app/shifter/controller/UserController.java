@@ -1,6 +1,7 @@
 package app.shifter.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import app.shifter.DTOs.EmployeeDTO;
@@ -23,6 +24,21 @@ public class UserController {
     @Autowired
     private EmployeeService employeeService;
 
+    
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping
+    public List<UserDTO> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping("/{id}")
+    public UserDTO getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public UserDTO createUser(@RequestBody UserDTO userDTO) {
 
@@ -38,26 +54,19 @@ public class UserController {
         return userService.createUser(userDTO, userDTO.getPassword()); 
     }
 
-    @GetMapping
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
-    }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public UserDTO updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         return userService.updateUser(id, userDTO, userDTO.getPassword()); // Salasanan encoodaaminen tapahtuu DTO-luokassa
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
     public UserDTO patchUser(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         return userService.patchUser(id, updates);

@@ -16,6 +16,8 @@ public interface ShiftService {
     void deleteShift(Long shiftId);
     ShiftDTO patchShift(Long shiftId, Map<String, Object> updates);
     List<BreakDTO> calculateBreaks(LocalTime startTime, LocalTime endTime);
-
-
+  
 }
+
+
+

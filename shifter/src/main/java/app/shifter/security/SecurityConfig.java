@@ -11,30 +11,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                .csrf(csrf -> csrf.disable()) // Ei tarvitse käyttää CSRF tokeneita tässä tapauksessa
-                .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/**").permitAll() // Toistaiseksi kaikki endpointit toimii käyttäjällä
-                                .anyRequest().authenticated() 
-                )
-                .httpBasic(withDefaults()); 
+            .csrf(csrf -> csrf.disable()) 
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/login", "/resources/**").permitAll() 
+                .requestMatchers("/api/shifts/**", "/api/workdays/**").hasAnyRole("ADMIN", "USER")
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/index", true) 
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            );
 
         return http.build();
     }
 
     @Bean
     UserDetailsService userDetailsService() {
-        
         UserDetails user = User.builder()
             .username("Henkka")
-            .password(passwordEncoder().encode("apipyynnöt"))
+            .password(passwordEncoder().encode("admin"))
             .roles("ADMIN")
             .build();
 

@@ -2,6 +2,7 @@ package app.shifter.controller;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,5 +55,8 @@ public class ShiftController {
     @PatchMapping("/{id}")
     public ShiftDTO patchShift(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
     return shiftService.patchShift(id, updates);
-}
+
+    
+    }
+
 }

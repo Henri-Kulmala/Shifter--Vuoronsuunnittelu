@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class User {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userid;
