@@ -21,7 +21,8 @@ public class User {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userid;
+    @Column(name = "user_id")
+    private Long userId;
 
     @NotBlank(message = "Please enter an username")
     @Column(nullable = false, unique = true)
@@ -32,11 +33,8 @@ public class User {
     @Column(nullable = false, unique = true)
     private String passwordHash;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",
-               joinColumns = @JoinColumn(name = "user_id"),
-               inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    
+    private String role;
 
 
     // Haetaan työntekijätiedot käyttäjän luomiseksi
@@ -48,19 +46,21 @@ public class User {
 
     public User() {}
 
-    public User(Long userid, String username, String passwordHash, Employee employee, Long employeeId) {
+    public User(Long userId, String role, String username, String passwordHash, Employee employee, Long employeeId) {
 
-        this.userid = userid;
+        this.userId = userId;
         this.username = username;
         this.passwordHash = passwordHash;
+        this.role = role;
         this.employee = employee;
+        
     }
 
     public Long getUserId() {
-        return userid;
+        return userId;
     }
-    public void setUserId(Long userid) {
-        this.userid = userid;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
     public String getUsername() {
         return username;
@@ -74,12 +74,12 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
-    public Set<Role> getRoles() {
-        return roles;
+    public String getRole() {
+        return role;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    public void setRole(String role) {
+        this.role = role;
     }
     
     public Employee getEmployee() {

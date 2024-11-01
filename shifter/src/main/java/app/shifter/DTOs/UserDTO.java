@@ -15,7 +15,7 @@ public class UserDTO {
     @Column(nullable = false, unique = true)
     private String username;
     
-    private Set<String> roles;
+    private String role;
 
     @NotBlank(message = "Please declare an employee")
     @OneToOne
@@ -27,10 +27,10 @@ public class UserDTO {
 
     public UserDTO() {}
 
-    public UserDTO(Long userId, String username,Set<String> roles, EmployeeDTO employee) {
+    public UserDTO(Long userId, String username,String role, EmployeeDTO employee) {
         this.userId = userId;
         this.username = username;
-        this.roles = roles;
+        this.role = role;
         this.employee = employee;
     }
 
@@ -49,12 +49,12 @@ public class UserDTO {
         this.username = username;
     }
 
-    public Set<String> getRoles() {
-        return roles;
+    public String getRole() {
+        return role;
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
+    public void setRole(String role) {
+        this.role = role;
     }
     
     

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,33 +18,42 @@ import org.springframework.stereotype.Service;
 import app.shifter.DTOs.EmployeeDTO;
 import app.shifter.DTOs.UserDTO;
 import app.shifter.domain.Employee;
-import app.shifter.domain.Role;
 import app.shifter.domain.User;
 import app.shifter.interfaces.EmployeeService;
 import app.shifter.interfaces.UserService;
 import app.shifter.mappers.EmployeeMapper;
 import app.shifter.mappers.UserMapper;
-import app.shifter.repositories.RoleRepository;
 import app.shifter.repositories.UserRepository;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
     
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
     
-    @Autowired
-    private EmployeeService employeeService;
+        @Autowired
+        public UserServiceImpl(UserRepository userRepository) {
+            this.userRepository = userRepository;
+    }
+    
     
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User curruser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserDetails user = new org.springframework.security.core.userdetails.User(username,
+        curruser.getPasswordHash(),
+        AuthorityUtils.createAuthorityList(curruser.getRole()));
+        return user;
+    }
 
     
-    
-
     @Override
     public UserDTO createUser(UserDTO userDTO, String password) {
         User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
@@ -53,11 +63,8 @@ public class UserServiceImpl implements UserService {
         user.setPasswordHash(hashedPassword);
 
         // Set roles by looking them up in the database
-        Set<Role> roles = userDTO.getRoles().stream()
-            .map(roleName -> roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
-            .collect(Collectors.toSet());
-        user.setRoles(roles);
+        String role = userDTO.getRole();
+        user.setRole(role);
 
         User savedUser = userRepository.save(user);
         return UserMapper.INSTANCE.userToUserDTO(savedUser);
@@ -97,11 +104,8 @@ public class UserServiceImpl implements UserService {
             existingUser.setPasswordHash(hashedPassword);
         }
 
-        Set<Role> roles = userDTO.getRoles().stream()
-            .map(roleName -> roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
-            .collect(Collectors.toSet());
-        existingUser.setRoles(roles);
+        String role = userDTO.getRole();
+        existingUser.setRole(role);
 
         User updatedUser = userRepository.save(existingUser);
         return UserMapper.INSTANCE.userToUserDTO(updatedUser);
@@ -126,12 +130,8 @@ public class UserServiceImpl implements UserService {
                     existingUser.setUsername((String) value);
                     break;
                 case "roles":
-                    @SuppressWarnings("unchecked") List<String> roleNames = (List<String>) value;
-                    Set<Role> roles = roleNames.stream()
-                        .map(roleName -> roleRepository.findByName(roleName)
-                            .orElseThrow(() -> new RuntimeException("Role not found: " + roleName)))
-                        .collect(Collectors.toSet());
-                    existingUser.setRoles(roles);
+                String role = existingUser.getRole();
+                existingUser.setRole(role);
                     break;
                 case "employee":
                     @SuppressWarnings("unchecked") Map<String, Object> employeeData = (Map<String, Object>) value;
