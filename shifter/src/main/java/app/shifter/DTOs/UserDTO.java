@@ -1,5 +1,7 @@
 package app.shifter.DTOs;
 
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
@@ -12,10 +14,8 @@ public class UserDTO {
     @NotBlank(message = "Please enter an username")
     @Column(nullable = false, unique = true)
     private String username;
-
-    @NotNull(message = "This field cannot be null (admin => TRUE / FALSE)")
-    @Column(nullable = false)
-    private Boolean admin;
+    
+    private Set<String> roles;
 
     @NotBlank(message = "Please declare an employee")
     @OneToOne
@@ -27,10 +27,10 @@ public class UserDTO {
 
     public UserDTO() {}
 
-    public UserDTO(Long userId, String username, Boolean admin, EmployeeDTO employee) {
+    public UserDTO(Long userId, String username,Set<String> roles, EmployeeDTO employee) {
         this.userId = userId;
         this.username = username;
-        this.admin = admin;
+        this.roles = roles;
         this.employee = employee;
     }
 
@@ -49,12 +49,14 @@ public class UserDTO {
         this.username = username;
     }
 
-    public Boolean getAdmin() {
-        return admin;
+    public Set<String> getRoles() {
+        return roles;
     }
-    public void setAdmin(Boolean admin) {
-        this.admin = admin;
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
+    
     
     public EmployeeDTO getEmployee() {
         return employee;

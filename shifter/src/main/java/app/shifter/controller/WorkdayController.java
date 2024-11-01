@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import app.shifter.DTOs.WorkdayDTO;
@@ -29,6 +30,8 @@ public class WorkdayController {
     }
 
     // PATCH endpoint to add a shift to an existing workday
+    
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{date}/shift")
     public ResponseEntity<WorkdayDTO> patchWorkdayAddShift(
         @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
@@ -46,6 +49,9 @@ public class WorkdayController {
     }
 
     // Endpoint to get a workday by a specific date
+
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{date}")
     public ResponseEntity<WorkdayDTO> getWorkdayByDate(
             @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
@@ -57,6 +63,8 @@ public class WorkdayController {
     }
 
     // Endpoint to get all workdays
+    
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
     public List<WorkdayDTO> getAllWorkdays() {
         return workdayService.getAllWorkdays();

@@ -11,6 +11,7 @@ import app.shifter.interfaces.ShiftService;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/shifts")
 public class ShiftController {
@@ -21,7 +22,7 @@ public class ShiftController {
     @Autowired
     private ShiftService shiftService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ShiftDTO createShift(@RequestBody ShiftDTO shift) {
         return shiftService.createShift(shift);
@@ -39,19 +40,19 @@ public class ShiftController {
         return shiftService.getShiftById(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
     public ShiftDTO updateShifts(@PathVariable Long id, ShiftDTO shift) {
         return shiftService.updateShifts(id, shift);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteShift(@PathVariable Long id) {
         shiftService.deleteShift(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{id}")
     public ShiftDTO patchShift(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
     return shiftService.patchShift(id, updates);

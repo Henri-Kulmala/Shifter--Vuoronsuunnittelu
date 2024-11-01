@@ -2,6 +2,7 @@ package app.shifter.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import app.shifter.DTOs.EmployeeDTO;
@@ -16,11 +17,13 @@ import java.util.Map;
 @RequestMapping("/api/users")
 public class UserController {
 
+    private final UserService userService;
 
-    // Tuodaan service-luokasta tarvittavat toiminnallisuudet endpointteja varten
-    @Autowired
-    private UserService userService;
-
+    
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+    
     @Autowired
     private EmployeeService employeeService;
 
@@ -38,7 +41,7 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public UserDTO createUser(@RequestBody UserDTO userDTO) {
 
@@ -54,21 +57,24 @@ public class UserController {
         return userService.createUser(userDTO, userDTO.getPassword()); 
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
     public UserDTO updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         return userService.updateUser(id, userDTO, userDTO.getPassword()); // Salasanan encoodaaminen tapahtuu DTO-luokassa
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+ 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{id}")
     public UserDTO patchUser(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         return userService.patchUser(id, updates);
     }
+
 }
+

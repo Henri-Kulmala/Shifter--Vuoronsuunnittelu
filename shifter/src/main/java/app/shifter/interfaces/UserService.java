@@ -4,6 +4,8 @@ import java.util.List;
 
 import java.util.Map;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 import app.shifter.DTOs.UserDTO;
 
 public interface UserService {

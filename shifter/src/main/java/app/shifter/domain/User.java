@@ -1,11 +1,17 @@
 package app.shifter.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,9 +32,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String passwordHash;
 
-    @NotNull(message = "This field cannot be null (admin => TRUE / FALSE)")
-    @Column(nullable = false)
-    private Boolean admin;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+               joinColumns = @JoinColumn(name = "user_id"),
+               inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
 
     // Haetaan työntekijätiedot käyttäjän luomiseksi
@@ -40,12 +48,11 @@ public class User {
 
     public User() {}
 
-    public User(Long userid, String username, String passwordHash, Boolean admin, Employee employee, Long employeeId) {
+    public User(Long userid, String username, String passwordHash, Employee employee, Long employeeId) {
 
         this.userid = userid;
         this.username = username;
         this.passwordHash = passwordHash;
-        this.admin = admin;
         this.employee = employee;
     }
 
@@ -67,13 +74,14 @@ public class User {
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
-    public Boolean getAdmin() {
-        return admin;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setAdmin(Boolean admin) {
-        this.admin = admin;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
+    
     public Employee getEmployee() {
         return employee;
     }
