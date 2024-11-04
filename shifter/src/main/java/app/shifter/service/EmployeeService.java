@@ -9,12 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import app.shifter.DTOs.EmployeeDTO;
 import app.shifter.domain.Employee;
-import app.shifter.interfaces.EmployeeService;
 import app.shifter.mappers.EmployeeMapper;
 import app.shifter.repositories.EmployeeRepository;
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -22,7 +21,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper; 
 
-    @Override
+    
     public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
         
         Employee employee = employeeMapper.employeeDTOToEmployee(employeeDTO);
@@ -32,7 +31,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeMapper.employeeToEmployeeDTO(savedEmployee);
     }
 
-    @Override
+    
     public List<EmployeeDTO> getAllEmployees() {
         
         return employeeRepository.findAll()
@@ -41,7 +40,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .collect(Collectors.toList());
     }
 
-    @Override
+    
     public EmployeeDTO getEmployeeById(Long id) {
        
         return employeeRepository.findById(id)
@@ -49,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElse(null); 
     }
 
-    @Override
+    
     public EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO) {
        
         if (employeeRepository.existsById(id)) {
@@ -63,16 +62,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         return null;
     }
 
-    @Override
-    public void deleteEmployee(Long id) {
+   
+    public boolean deleteEmployee(Long id) {
         if (employeeRepository.existsById(id)) {
             employeeRepository.deleteById(id);
         } else {
             throw new RuntimeException("Employee not found");
         }
+        return true;
     }
 
-    @Override
+    
     public EmployeeDTO getEmployeeByFullName(String firstName, String lastName) {
         
         return employeeMapper.employeeToEmployeeDTO(
@@ -80,7 +80,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         );
     }
 
-    @Override
+    
     public EmployeeDTO patchEmployee(Long employeeId, Map<String, Object> updates) {
         
         Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);

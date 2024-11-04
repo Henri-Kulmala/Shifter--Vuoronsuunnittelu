@@ -12,6 +12,7 @@ public class ShiftDTO {
 
     private Long shiftId;
 
+    
     private EmployeeDTO employee; 
 
     @NotBlank(message = "Please declare the shift's name")
@@ -36,6 +37,10 @@ public class ShiftDTO {
     
 
     public ShiftDTO() {}
+
+    public ShiftDTO(Long shiftId) {
+        this.shiftId = shiftId;
+    }
 
     public ShiftDTO(Long shiftId, String shiftName, String workstation, LocalTime startTime, LocalTime endTime, List<BreakDTO> breaks, EmployeeDTO employee, ShiftDTO coveringShift, List<ShiftDTO> coveredBreaks) {
         this.shiftId = shiftId;
@@ -103,5 +108,15 @@ public class ShiftDTO {
     public void setEmployee(EmployeeDTO employee) {
         this.employee = employee;
     }
+
+
+    @Override
+    public String toString() {
+    return "ShiftDTO{" +
+           "shiftId=" + shiftId +
+           ", shiftName='" + shiftName + '\'' +
+           ", workstation='" + workstation + '\'' +
+           '}';
+}
 
 }

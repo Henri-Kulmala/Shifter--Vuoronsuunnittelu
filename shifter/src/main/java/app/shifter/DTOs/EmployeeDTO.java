@@ -1,6 +1,6 @@
 package app.shifter.DTOs;
 
-import jakarta.persistence.Column;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -49,9 +49,12 @@ public class EmployeeDTO {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+    public void setFullName(String fullName) {
+        this.fullName = firstName + " " + lastName;
+    }
 
     public String getFullName() {
-        return fullName = firstName + " " + lastName;
+        return fullName;
     }
     
     public String getNotes() {

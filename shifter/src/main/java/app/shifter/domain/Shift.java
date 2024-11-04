@@ -44,9 +44,9 @@ public class Shift {
     private LocalTime endTime;
 
     
-    @NotBlank(message = "A shift must have it's employee stated")
-    @ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "employee_id", nullable = false)
+
+    @ManyToOne(fetch = FetchType.LAZY, optional=true) 
+    @JoinColumn(name = "employee_id", nullable=true)
     private Employee employee;
     
 

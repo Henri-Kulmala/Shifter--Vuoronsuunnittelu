@@ -7,9 +7,7 @@ import java.time.DayOfWeek;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
+
 
 
 public class WorkdayDTO {
@@ -18,12 +16,11 @@ public class WorkdayDTO {
     private Long workdayId;
 
     @JsonFormat(pattern = "dd-MM-yyy")
-    @Column(nullable = false)
     private LocalDate date;
 
     private DayOfWeek dayOfWeek;
     
-    @OneToMany(mappedBy = "workday", cascade = CascadeType.ALL)
+   
     private List<ShiftDTO> shifts = new ArrayList<>();
 
     

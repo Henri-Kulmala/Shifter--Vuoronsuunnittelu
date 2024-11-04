@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/login", "/resources/**").permitAll()
-                        .requestMatchers("/api/**").hasAnyAuthority("ADMIN", "USER") // Adjusted to use authority for roles
+                        .requestMatchers("/api/**").hasAnyAuthority("ADMIN", "USER") 
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

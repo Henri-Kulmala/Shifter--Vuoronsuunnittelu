@@ -20,16 +20,17 @@ import app.shifter.domain.Shift;
 import app.shifter.exceptionHandling.Exceptions.NotQualifiedException;
 import app.shifter.exceptionHandling.Exceptions.OutOfWorkingHoursException;
 import app.shifter.exceptionHandling.Exceptions.ShiftConflictException;
-import app.shifter.interfaces.ShiftService;
+
+import app.shifter.service.EmployeeService;
 import app.shifter.mappers.BreakMapper;
 import app.shifter.mappers.EmployeeMapper;
 import app.shifter.mappers.ShiftMapper;
 import app.shifter.repositories.EmployeeRepository;
 import app.shifter.repositories.ShiftRepository;
-import app.shifter.interfaces.EmployeeService;
+
 
 @Service
-public class ShiftServiceImpl implements ShiftService {
+public class ShiftService {
 
     @Autowired
     private ShiftRepository shiftRepository;
@@ -49,24 +50,22 @@ public class ShiftServiceImpl implements ShiftService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @Override
-    public ShiftDTO createShift(ShiftDTO shiftDTO) {
-        Long employeeId = shiftDTO.getEmployee().getEmployeeId();
     
+    public ShiftDTO createShift(ShiftDTO shiftDTO) {
+    Shift shift = shiftMapper.shiftDTOToShift(shiftDTO);
+
+
+    if (shiftDTO.getEmployee() != null) {
+        Long employeeId = shiftDTO.getEmployee().getEmployeeId();
         Employee employee = employeeRepository.findById(employeeId)
             .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
-    
-        validateQualification(employee, shiftDTO.getWorkstation());
-    
-        Shift shift = shiftMapper.shiftDTOToShift(shiftDTO);
         shift.setEmployee(employee);
-    
-        // Calculate and set initial breaks
+    }
+
         List<BreakDTO> calculatedBreaks = calculateBreaks(shiftDTO.getStartTime(), shiftDTO.getEndTime());
         shift.setBreaks(breakMapper.breakDTOListToBreakList(calculatedBreaks));
-    
+
         Shift savedShift = shiftRepository.save(shift);
-    
         return shiftMapper.shiftToShiftDTO(savedShift);
     }
 
@@ -91,20 +90,20 @@ public class ShiftServiceImpl implements ShiftService {
         }
     }
 
-    @Override
+
     public List<ShiftDTO> getAllShifts() {
         return shiftRepository.findAll().stream()
                 .map(shiftMapper::shiftToShiftDTO)
                 .collect(Collectors.toList());
     }
 
-    @Override
+
     public ShiftDTO getShiftById(Long shiftId) {
         Optional<Shift> shiftOpt = shiftRepository.findById(shiftId);
         return shiftOpt.map(shiftMapper::shiftToShiftDTO).orElse(null);
     }
 
-    @Override
+
     public ShiftDTO updateShifts(Long shiftId, ShiftDTO shiftDTO) {
         if (shiftRepository.existsById(shiftId)) {
             Shift shift = shiftMapper.shiftDTOToShift(shiftDTO);
@@ -115,16 +114,17 @@ public class ShiftServiceImpl implements ShiftService {
         return null;
     }
 
-    @Override
-    public void deleteShift(Long shiftId) {
+
+    public boolean deleteShift(Long shiftId) {
         if (shiftRepository.existsById(shiftId)) {
             shiftRepository.deleteById(shiftId);
         } else {
             throw new RuntimeException("Shift not found");
         }
+        return false;
+
     }
 
-    @Override
     public List<BreakDTO> calculateBreaks(LocalTime startTime, LocalTime endTime) {
         List<BreakDTO> breaks = new ArrayList<>();
         long hours = java.time.Duration.between(startTime, endTime).toHours();
@@ -143,7 +143,7 @@ public class ShiftServiceImpl implements ShiftService {
         return breaks;
     }
 
-    @Override
+
     public ShiftDTO patchShift(Long shiftId, Map<String, Object> updates) {
         Optional<Shift> optionalShift = shiftRepository.findById(shiftId);
         if (!optionalShift.isPresent()) {
@@ -177,7 +177,7 @@ public class ShiftServiceImpl implements ShiftService {
                         newBreak.setBreakStart(LocalTime.parse((String) breakData.get("breakStart"), timeFormatter));
                         newBreak.setBreakEnd(LocalTime.parse((String) breakData.get("breakEnd"), timeFormatter));
 
-                        // Set breakCoverEmployee based on provided ID
+
                         if (breakData.containsKey("breakCoverEmployee")) {
                             Long breakCoverEmployeeId = Long.parseLong(breakData.get("breakCoverEmployee").toString());
                             Employee breakCoverEmployee = employeeRepository.findById(breakCoverEmployeeId)
@@ -188,13 +188,14 @@ public class ShiftServiceImpl implements ShiftService {
                         updatedBreaks.add(newBreak);
                     }
 
-                    // Map the updated breaks to the shift
+
                     existingShift.setBreaks(breakMapper.breakDTOListToBreakList(updatedBreaks));
-                    break;
+                
                 case "employee":
                     @SuppressWarnings("unchecked") Long employeeId = Long.parseLong(((Map<String, Object>) value).get("employeeId").toString());
                     Employee employee = employeeRepository.findById(employeeId)
                         .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
+                    validateQualification(employee, existingShift.getWorkstation());
                     existingShift.setEmployee(employee);
                     break;
                 default:

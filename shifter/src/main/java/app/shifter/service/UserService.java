@@ -19,20 +19,20 @@ import app.shifter.DTOs.EmployeeDTO;
 import app.shifter.DTOs.UserDTO;
 import app.shifter.domain.Employee;
 import app.shifter.domain.User;
-import app.shifter.interfaces.EmployeeService;
-import app.shifter.interfaces.UserService;
+
+
 import app.shifter.mappers.EmployeeMapper;
 import app.shifter.mappers.UserMapper;
 import app.shifter.repositories.UserRepository;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserService implements UserDetailsService{
 
     
     private final UserRepository userRepository;
     
-        @Autowired
-        public UserServiceImpl(UserRepository userRepository) {
+
+        public UserService(UserRepository userRepository) {
             this.userRepository = userRepository;
     }
     
@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     private EmployeeService employeeService;
 
-    @Override
+
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User curruser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     
-    @Override
+
     public UserDTO createUser(UserDTO userDTO, String password) {
         User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
 
@@ -70,7 +70,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return UserMapper.INSTANCE.userToUserDTO(savedUser);
     }
 
-    @Override
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
@@ -78,21 +77,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-    @Override
+
     public UserDTO getUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return UserMapper.INSTANCE.userToUserDTO(user);
     }
 
-    @Override
+
     public UserDTO getUserByUserName(String userName) {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return UserMapper.INSTANCE.userToUserDTO(user);
     }
 
-    @Override
+
     public UserDTO updateUser(Long userId, UserDTO userDTO, String password) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -111,15 +110,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return UserMapper.INSTANCE.userToUserDTO(updatedUser);
     }
 
-    @Override
-    public void deleteUser(Long userId) {
+
+    public boolean deleteUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new RuntimeException("User not found");
         }
         userRepository.deleteById(userId);
+        return true;
     }
 
-    @Override
+
     public UserDTO patchUser(Long userId, Map<String, Object> updates) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
