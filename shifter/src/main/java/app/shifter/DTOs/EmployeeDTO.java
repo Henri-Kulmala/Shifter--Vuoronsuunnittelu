@@ -22,10 +22,13 @@ public class EmployeeDTO {
 
     public EmployeeDTO() {}
 
-    public EmployeeDTO(Long employeeId, String firstName, String lastName, String fullName, Boolean qualification, String notes) {
+    public EmployeeDTO(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public EmployeeDTO(Long employeeId, String firstName, String lastName, Boolean qualification, String notes) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.fullName = firstName + " " + lastName;
         this.qualification = qualification;
         this.notes = notes;
     }
@@ -49,12 +52,9 @@ public class EmployeeDTO {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    public void setFullName(String fullName) {
-        this.fullName = firstName + " " + lastName;
-    }
-
+    
     public String getFullName() {
-        return fullName;
+        return firstName + " " + lastName;
     }
     
     public String getNotes() {

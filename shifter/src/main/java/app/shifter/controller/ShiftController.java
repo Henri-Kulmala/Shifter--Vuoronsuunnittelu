@@ -12,14 +12,10 @@ import app.shifter.service.ShiftService;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/shifts")
 public class ShiftController {
 
-
-
-    
     @Autowired
     private ShiftService shiftService;
 
@@ -29,7 +25,6 @@ public class ShiftController {
         ShiftDTO createdShift = shiftService.createShift(shift);
         return new ResponseEntity<>(createdShift, HttpStatus.CREATED);
     }
-
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
@@ -45,7 +40,7 @@ public class ShiftController {
         if (shift != null) {
             return new ResponseEntity<>(shift, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -56,7 +51,7 @@ public class ShiftController {
         if (updatedShift != null) {
             return new ResponseEntity<>(updatedShift, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -65,12 +60,11 @@ public class ShiftController {
     public ResponseEntity<Void> deleteShift(@PathVariable Long id) {
         boolean isDeleted = shiftService.deleteShift(id);
         if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
-
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}")
@@ -79,7 +73,19 @@ public class ShiftController {
         if (patchedShift != null) {
             return new ResponseEntity<>(patchedShift, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/{id}/{employeeId}")
+    public ResponseEntity<ShiftDTO> assignEmplyoee(@PathVariable Long id, @PathVariable Long employeeId) {
+        ShiftDTO assignedEmplyoee = shiftService.assignEmployee(id, employeeId);
+        if (assignedEmplyoee != null) {
+            return new ResponseEntity<>(assignedEmplyoee, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

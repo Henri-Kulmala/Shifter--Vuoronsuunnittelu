@@ -28,6 +28,8 @@ public class WorkdayDTO {
 
     public WorkdayDTO() {}
 
+    
+
     public WorkdayDTO(LocalDate date, Long workdayId) {
         this.date = date;
         this.workdayId = workdayId;

@@ -42,6 +42,16 @@ public class ShiftDTO {
         this.shiftId = shiftId;
     }
 
+    public ShiftDTO(Long shiftId, String shiftName, String workstation, LocalTime startTime, LocalTime endTime, List<BreakDTO> breaks) {
+        this.shiftId = shiftId;
+        this.shiftName = shiftName;
+        this.workstation = workstation;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.breaks = breaks;
+        this.employee = null; // Default value
+    }
+
     public ShiftDTO(Long shiftId, String shiftName, String workstation, LocalTime startTime, LocalTime endTime, List<BreakDTO> breaks, EmployeeDTO employee, ShiftDTO coveringShift, List<ShiftDTO> coveredBreaks) {
         this.shiftId = shiftId;
         this.shiftName = shiftName;

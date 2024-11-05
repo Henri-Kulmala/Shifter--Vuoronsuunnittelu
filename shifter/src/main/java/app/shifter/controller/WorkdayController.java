@@ -31,17 +31,17 @@ public class WorkdayController {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{date}/shift")
     public ResponseEntity<WorkdayDTO> patchWorkdayAddShift(
-        @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
-        @RequestBody ShiftIdListDTO payload) {
-        
+            @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
+            @RequestBody ShiftIdListDTO payload) {
+
         WorkdayDTO workdayDTO = workdayService.getWorkdayByDate(date);
-        
+
         if (workdayDTO == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    
+
         WorkdayDTO updatedWorkday = workdayService.patchWorkdayAddShift(workdayDTO, payload);
-        return new ResponseEntity<>(updatedWorkday, HttpStatus.OK); 
+        return new ResponseEntity<>(updatedWorkday, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -55,10 +55,30 @@ public class WorkdayController {
         return new ResponseEntity<>(workdayDTO, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<WorkdayDTO>> getAllWorkdays() {
         List<WorkdayDTO> workdays = workdayService.getAllWorkdays();
         return new ResponseEntity<>(workdays, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PutMapping("/{date}/shift")
+    public ResponseEntity<WorkdayDTO> addShiftsToWorkday(
+            @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
+            @RequestBody ShiftIdListDTO payload) {
+
+        // Retrieve the existing workday by date
+        WorkdayDTO workdayDTO = workdayService.getWorkdayByDate(date);
+
+        if (workdayDTO == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Update the workday with the new list of shifts
+        WorkdayDTO updatedWorkday = workdayService.addShiftsToWorkday(workdayDTO, payload);
+
+        return new ResponseEntity<>(updatedWorkday, HttpStatus.OK);
+    }
+
 }

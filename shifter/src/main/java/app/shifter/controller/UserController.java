@@ -41,7 +41,7 @@ public class UserController {
         if (user != null) {
             return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -53,7 +53,7 @@ public class UserController {
             if (employeeDTO != null) {
                 userDTO.setEmployee(employeeDTO);
             } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         }
         UserDTO createdUser = userService.createUser(userDTO, userDTO.getPassword());
@@ -67,7 +67,7 @@ public class UserController {
         if (updatedUser != null) {
             return new ResponseEntity<>(updatedUser, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -76,9 +76,9 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         boolean isDeleted = userService.deleteUser(id);
         if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -89,7 +89,7 @@ public class UserController {
         if (patchedUser != null) {
             return new ResponseEntity<>(patchedUser, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

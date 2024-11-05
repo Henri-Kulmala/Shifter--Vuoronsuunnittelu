@@ -40,7 +40,7 @@ public class EmployeeController {
         if (employee != null) {
             return new ResponseEntity<>(employee, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -51,7 +51,7 @@ public class EmployeeController {
         if (updatedEmployee != null) {
             return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -60,9 +60,9 @@ public class EmployeeController {
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         boolean isDeleted = employeeService.deleteEmployee(id);
         if (isDeleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -73,7 +73,7 @@ public class EmployeeController {
         if (patchedEmployee != null) {
             return new ResponseEntity<>(patchedEmployee, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

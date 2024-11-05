@@ -1,6 +1,5 @@
 package app.shifter.security;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.Customizer;
 import org.springframework.context.annotation.Configuration;
@@ -16,22 +15,19 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/login", "/resources/**").permitAll()
-                        .requestMatchers("/api/**").hasAnyAuthority("ADMIN", "USER") 
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/api/**").hasAnyAuthority("ADMIN", "USER")
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
-                    .loginPage("/login")
-                    .permitAll()
-                    .defaultSuccessUrl("/index", true)
-                )
-                .httpBasic(Customizer.withDefaults()); // Enable HTTP Basic authentication
+                        .loginPage("/login")
+                        .permitAll()
+                        .defaultSuccessUrl("/index", true))
+                .httpBasic(Customizer.withDefaults()); 
 
         return http.build();
     }
@@ -45,4 +41,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
+
 }

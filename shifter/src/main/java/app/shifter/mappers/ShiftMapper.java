@@ -3,7 +3,6 @@ package app.shifter.mappers;
 import app.shifter.domain.Shift;
 import app.shifter.DTOs.ShiftDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import java.util.List;
 

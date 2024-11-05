@@ -12,7 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 @Embeddable
 public class Break {
 
-    @NotBlank(message= "Declare a breaktype (Kahvitauko / Ruokatauko)")
+    @NotBlank(message = "Declare a breaktype (Kahvitauko / Ruokatauko)")
     @Column(nullable = false)
     private String breakType;
 
@@ -29,7 +29,8 @@ public class Break {
     @ManyToOne
     private Employee coverEmployee;
 
-    public Break() {}
+    public Break() {
+    }
 
     public Break(String breakType, LocalTime breakStart, LocalTime breakEnd) {
         this.breakType = breakType;
