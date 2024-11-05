@@ -6,17 +6,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import java.util.List;
 
-
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = { EmployeeMapper.class })
 public interface BreakMapper {
 
     BreakMapper INSTANCE = Mappers.getMapper(BreakMapper.class);
 
-    Break breakDTOToBreak(BreakDTO breakDTO);
+    List<BreakDTO> breakListToBreakDTOList(List<Break> breaks);
 
     List<Break> breakDTOListToBreakList(List<BreakDTO> breakDTOs);
-
-    BreakDTO breakToBreakDTO(Break breaks);
-
-    List<BreakDTO> breakListToBreakDTOList(List<Break> breaks);
 }

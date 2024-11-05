@@ -1,6 +1,6 @@
 package app.shifter.DTOs;
 
-import jakarta.persistence.Column;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,19 +9,22 @@ public class EmployeeDTO {
     private Long employeeId;
 
     @NotBlank(message = "Declare the employee's first name")
-    @Column(nullable = false)
     private String firstName;
 
     @NotBlank(message = "Declare the employee's last name")
-    @Column(nullable = false)
     private String lastName;
 
+    private String fullName;
+
     @NotNull(message = "This field cannot be null (qualification => TRUE / FALSE)")
-    @Column(nullable = false)
     private Boolean qualification;
     private String notes;
 
     public EmployeeDTO() {}
+
+    public EmployeeDTO(Long employeeId) {
+        this.employeeId = employeeId;
+    }
 
     public EmployeeDTO(Long employeeId, String firstName, String lastName, Boolean qualification, String notes) {
         this.firstName = firstName;
@@ -49,7 +52,7 @@ public class EmployeeDTO {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
+    
     public String getFullName() {
         return firstName + " " + lastName;
     }

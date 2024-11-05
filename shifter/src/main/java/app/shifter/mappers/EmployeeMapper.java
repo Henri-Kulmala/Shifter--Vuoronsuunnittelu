@@ -10,9 +10,7 @@ public interface EmployeeMapper {
 
     EmployeeMapper INSTANCE = Mappers.getMapper(EmployeeMapper.class);
 
-    // Mapping from Entity to DTO
     EmployeeDTO employeeToEmployeeDTO(Employee employee);
 
-    // Mapping from DTO to Entity
     Employee employeeDTOToEmployee(EmployeeDTO employeeDTO);
 }

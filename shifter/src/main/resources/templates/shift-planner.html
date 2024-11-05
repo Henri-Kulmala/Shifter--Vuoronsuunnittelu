@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shift-Planner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-info p-3">
+        <a class="navbar-brand" href="/index">Shifter</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto m-3">
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{/shift-planner}">ShiftPlanner</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" th:href="@{/login}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <h2 class="text-center" th:text="${workday.date} + ' ' + ${dayOfWeek}">Workday</h2>
+        
+        <div class="mb-3">
+            <h3 for="workdayDate" class="form-label">Calendar</h3>
+            <input type="date" value="${workday.date}" id="workdayDate" class="form-control" onchange="getWorkday(this.value)">
+        </div>
+    
+        <form th:action="@{/shiftplanner/{date}(date=${workday.date})}" method="post" id="workdayForm">
+           
+            <div class="row border border-dark-subtle rounded gap-2 p-3 align-items-center justify-content-center">
+                <h1>Choose an employee</h1>
+                <h3>After selecting employees, press "Save"</h3>
+
+                <div th:each="entry : ${shiftsByWorkstation}" class="col  align-items-center gap-5">
+                    <div class="row border border-dark text-center rounded">
+                        <h3 th:text="${entry.key}"></h3>
+                    </div>
+                    
+                    <div th:each="shift : ${entry.value}" class="row rounded mb-2 border border-dark rounded mt-2">
+                        <label th:text="${shift.shiftName}"></label>
+                        
+                        <select class="form-select" th:name="${shift.shiftId}">
+                            <option disabled selected value="">Select Employee</option>
+                            <option th:each="employee : ${employees}" 
+                                    th:value="${employee.employeeId}" 
+                                    th:text="${employee.firstName} + ' ' + ${employee.lastName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="container p-5 justify-content-center align-items-center">
+                <button type="submit" class="btn btn-primary justify-content-center align-items-center">Save</button>
+            </div>
+           
+        </form>
+
+        <div id="savedWorkday" class="row p-3  border border-dark-subtle rounded gap-2 align-items-center justify-content-center">
+            
+            <h2 class="align-items-center justify-content-center">Current schedule</h2>
+            <div th:each="entry : ${shiftsByWorkstation}" class="col rounded align-items-center gap-5">
+                <div class="row border border-dark text-center mt-3 align-items-center rounded">
+                    <h3 th:text="${entry.key}"></h3>
+                </div>
+                
+                <div th:each="shift : ${entry.value}" class="row rounded mb-2 border border-dark rounded mt-5">
+                   
+                    <h3 class="form-label text-secondary">Shift: <span th:text="${shift.shiftName}"></span></h3>
+                   
+                    <div class="form-group">
+                        <label class="form-label"><strong>Employee:</strong></label>
+                        <p class="form-control-plaintext" th:text="${shift.employee.fullName}"></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label"><strong>Time:</strong></label>
+                        <p class="form-control-plaintext" th:text="${shift.startTime} + ' - ' + ${shift.endTime}"></p>
+                    </div> 
+                    
+                    <div class="form-group">
+                        <label class="form-label"><strong>Breaks:</strong></label>
+                        <ul class="list-unstyled">
+                            <li th:each="break : ${shift.breaks}">
+                                <span th:text="${break.breakType} + ': ' + ${break.breakStart} + ' - ' + ${break.breakEnd}"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        
+        <script>
+            function getWorkday(selectedDate) {
+                const dateParts = selectedDate.split('-');
+                const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                window.location.href = '/shiftplanner/' + formattedDate;
+            }
+        </script>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
