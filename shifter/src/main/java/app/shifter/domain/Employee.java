@@ -9,16 +9,16 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-
 @Entity
 @Table(name = "employee")
 public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "employee_id")
     private Long employeeId;
 
-    // Valuation
+    
     @NotBlank(message = "Declare the employee's first name")
     @Column(nullable = false)
     private String firstName;
@@ -33,8 +33,8 @@ public class Employee {
 
     private String notes;
 
-
-    public Employee() {}
+    public Employee() {
+    }
 
     public Employee(String firstName, String lastName, Boolean qualification, String notes) {
         this.firstName = firstName;
@@ -46,19 +46,23 @@ public class Employee {
     public Long getEmployeeId() {
         return employeeId;
     }
+
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
-   
+
     public String getFirstName() {
         return firstName;
     }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
     public String getLastName() {
         return lastName;
     }
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -66,13 +70,15 @@ public class Employee {
     public String getFullName() {
         return firstName + " " + lastName;
     }
-    
+
     public String getNotes() {
         return notes;
     }
+
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
     public Boolean getQualification() {
         return qualification;
     }
@@ -80,6 +86,5 @@ public class Employee {
     public void setQualification(Boolean qualification) {
         this.qualification = qualification;
     }
-
 
 }

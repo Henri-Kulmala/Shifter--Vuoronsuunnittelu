@@ -1,10 +1,13 @@
 package app.shifter.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import app.shifter.DTOs.EmployeeDTO;
-import app.shifter.interfaces.EmployeeService;
+import app.shifter.service.EmployeeService;
 
 import java.util.List;
 import java.util.Map;
@@ -13,42 +16,64 @@ import java.util.Map;
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
-
-    // Tuodaan service-luokasta tarvittavat toiminnallisuudet endpointteja varten
     @Autowired
     private EmployeeService employeeService;
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
-    public EmployeeDTO createEmployee(@RequestBody EmployeeDTO employee) {
-        return employeeService.createEmployee(employee);
+    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employee) {
+        EmployeeDTO createdEmployee = employeeService.createEmployee(employee);
+        return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping
-    public List<EmployeeDTO> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        List<EmployeeDTO> employees = employeeService.getAllEmployees();
+        return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/{id}")
-    public EmployeeDTO getEmployeeById(@PathVariable Long id) {
-        return employeeService.getEmployeeById(id);
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
+        EmployeeDTO employee = employeeService.getEmployeeById(id);
+        if (employee != null) {
+            return new ResponseEntity<>(employee, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
-    public EmployeeDTO updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employee) {
-        return employeeService.updateEmployee(id, employee);
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employee) {
+        EmployeeDTO updatedEmployee = employeeService.updateEmployee(id, employee);
+        if (updatedEmployee != null) {
+            return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public void deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteEmployee(id);
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+        boolean isDeleted = employeeService.deleteEmployee(id);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{id}")
-    public EmployeeDTO patchEmployee(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
-        return employeeService.patchEmployee(id, updates);
+    public ResponseEntity<EmployeeDTO> patchEmployee(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        EmployeeDTO patchedEmployee = employeeService.patchEmployee(id, updates);
+        if (patchedEmployee != null) {
+            return new ResponseEntity<>(patchedEmployee, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
-
 }
-
-
-// HTTPs Status Koodit!

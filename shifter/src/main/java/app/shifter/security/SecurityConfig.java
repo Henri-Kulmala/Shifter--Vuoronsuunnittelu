@@ -1,48 +1,45 @@
 package app.shifter.security;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Ei tarvitse käyttää CSRF tokeneita tässä tapauksessa
-                .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/**").permitAll() // Toistaiseksi kaikki endpointit toimii käyttäjällä
-                                .anyRequest().authenticated() 
-                )
-                .httpBasic(withDefaults()); 
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/login", "/resources/**").permitAll()
+                        .requestMatchers("/api/**").hasAnyAuthority("ADMIN", "USER")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll()
+                        .defaultSuccessUrl("/index", true))
+                .httpBasic(Customizer.withDefaults()); 
 
         return http.build();
-    }
-
-    @Bean
-    UserDetailsService userDetailsService() {
-        
-        UserDetails user = User.builder()
-            .username("Henkka")
-            .password(passwordEncoder().encode("apipyynnöt"))
-            .roles("ADMIN")
-            .build();
-
-        return new InMemoryUserDetailsManager(user);
     }
 
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
 }

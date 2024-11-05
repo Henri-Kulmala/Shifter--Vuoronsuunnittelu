@@ -1,11 +1,10 @@
 package app.shifter.domain;
 
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -15,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -32,16 +30,24 @@ public class Shift {
     @NotBlank(message = "Please declare the shift's name")
     @Column(nullable = false)
     private String shiftName;
-    
+
     @NotBlank(message = "Please declare the shift's start time")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @NotBlank(message = "Please declare the shift's end time")
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm")
+    @JsonFormat(pattern = "HH:mm")
     @Column(nullable = false)
-    private LocalDateTime endTime;
+    private LocalTime endTime;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "employee_id", nullable = true)
+    private Employee employee;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workday_id")
+    private Workday workday;
 
     // Sisältää listan taukoja, joita voi hyödyntää tässä luokassa
     @ElementCollection
@@ -49,29 +55,11 @@ public class Shift {
 
     // Tälle vuorolle määrätty työntekijä
 
-    @NotBlank(message = "A shift must have it's employee stated")
-    @ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "employee_id", nullable = false)
-    private Employee employee;
+    public Shift() {
+    }
 
-    // Tämän vuoron ja työntekijän tekemät taukopaikkaukset 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "covering_shift_id")
-    private Shift coveringShift;
-    
-    // Pohdi vielä toimintalogiikkaa lisää
-    @OneToMany(mappedBy = "coveringShift", cascade = CascadeType.ALL)
-    private List<Shift> coveredBreaks;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workday_id")
-    private Workday workday;
-
-    
-        
-    public Shift() {}
-
-    public Shift(Long shiftid, String workstation, String shiftName, LocalDateTime startTime, LocalDateTime endTime, List<Break> breaks, Employee employee, Workday workday) {
+    public Shift(Long shiftid, String workstation, String shiftName, LocalTime startTime, LocalTime endTime,
+            List<Break> breaks, Employee employee, Workday workday) {
         this.shiftid = shiftid;
         this.workstation = workstation;
         this.shiftName = shiftName;
@@ -89,7 +77,7 @@ public class Shift {
     public void setShiftId(Long shiftid) {
         this.shiftid = shiftid;
     }
-    
+
     public String getWorkstation() {
         return workstation;
     }
@@ -101,57 +89,41 @@ public class Shift {
     public String getShiftName() {
         return shiftName;
     }
-    
+
     public void setShiftName(String shiftName) {
         this.shiftName = shiftName;
     }
-    
-    public LocalDateTime getStartTime() {
+
+    public LocalTime getStartTime() {
         return startTime;
     }
-    
-    public void setStartTime(LocalDateTime startTime) {
+
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
-    
-    public LocalDateTime getEndTime() {
+
+    public LocalTime getEndTime() {
         return endTime;
     }
-    
-    public void setEndTime(LocalDateTime endTime) {
+
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
-    
+
     public List<Break> getBreaks() {
         return breaks;
     }
-    
+
     public void setBreaks(List<Break> list) {
         this.breaks = list;
     }
-    
+
     public Employee getEmployee() {
         return employee;
     }
-    
+
     public void setEmployee(Employee employee) {
         this.employee = employee;
-    }
-
-    public Shift getCoveringShift() {
-        return coveringShift;
-    }
-
-    public void setCoveringShift(Shift coveringShift) {
-        this.coveringShift = coveringShift;
-    }
-
-    public List<Shift> getCoveredBreaks() {
-        return coveredBreaks;
-    }
-
-    public void setCoveredBreaks(List<Shift> coveredBreaks) {
-        this.coveredBreaks = coveredBreaks;
     }
 
     public Workday getWorkday() {
@@ -163,6 +135,3 @@ public class Shift {
     }
 
 }
-
-
-
