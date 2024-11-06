@@ -48,11 +48,8 @@ public class UserService implements UserDetailsService {
     public UserDTO createUser(UserDTO userDTO, String password) {
         User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
 
-        // Hash the password before storing
         String hashedPassword = passwordEncoder.encode(password);
         user.setPasswordHash(hashedPassword);
-
-        // Set roles by looking them up in the database
         String role = userDTO.getRole();
         user.setRole(role);
 

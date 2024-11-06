@@ -55,7 +55,7 @@ public class EmployeeController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         boolean isDeleted = employeeService.deleteEmployee(id);
