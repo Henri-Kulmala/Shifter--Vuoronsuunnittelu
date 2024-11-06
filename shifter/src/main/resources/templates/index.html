@@ -11,7 +11,7 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto m-3">
                 <li class="nav-item ">
-                    <a class="nav-link text-white" th:href="@{/shiftplanner}">ShiftPlanner</a>
+                    <a class="nav-link text-white" th:href="@{/shiftplanner/{date}(date=${today})}">ShiftPlanner</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" th:href="@{/login}">Logout</a>

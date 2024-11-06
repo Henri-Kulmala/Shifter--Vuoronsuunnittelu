@@ -1,6 +1,7 @@
 package app.shifter.controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -38,16 +39,18 @@ public class MainController {
     }
 
     @GetMapping("/index")
-    public String indexPage() {
+    public String indexPage(Model model) {
+    LocalDate today = LocalDate.now(); 
+    model.addAttribute("today", today.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         return "index";
     }
 
     @GetMapping("/shiftplanner/{date}")
     public String getWorkday(@PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, Model model) {
         WorkdayDTO workday = workdayService.getWorkdayByDate(date);
-
+        
         if (workday == null) {
-            model.addAttribute("error", "No workday available for the selected date.");
+            workday = workdayService.createOrGetWorkday(date);
             return "shift-planner";
         }
         List<EmployeeDTO> employees = employeeService.getAllEmployees();
@@ -66,6 +69,7 @@ public class MainController {
                 .map(ShiftDTO::getWorkstation)
                 .distinct()
                 .collect(Collectors.toList());
+
 
         model.addAttribute("workday", workday);
         model.addAttribute("shiftsByWorkstation", shiftsByWorkstation);
@@ -105,7 +109,7 @@ public class MainController {
             shiftService.assignEmployee(shiftId, employeeId);
         }
 
-        // Redirect to "shift-planner" URL
+        
         return new RedirectView("/shiftplanner/{date}");
     }
 

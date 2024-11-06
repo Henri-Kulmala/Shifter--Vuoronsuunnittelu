@@ -66,7 +66,7 @@ public class WorkdayController {
     @PutMapping("/{date}/shift")
     public ResponseEntity<WorkdayDTO> addShiftsToWorkday(
             @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
-            @RequestBody ShiftIdListDTO payload) {
+            @RequestBody List<Long> payload) {
 
         // Retrieve the existing workday by date
         WorkdayDTO workdayDTO = workdayService.getWorkdayByDate(date);
@@ -79,6 +79,18 @@ public class WorkdayController {
         WorkdayDTO updatedWorkday = workdayService.addShiftsToWorkday(workdayDTO, payload);
 
         return new ResponseEntity<>(updatedWorkday, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWorkday(@PathVariable Long id) {
+        boolean isDeleted = workdayService.deleteWorkday(id);
+        if (isDeleted) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
     }
 
 }

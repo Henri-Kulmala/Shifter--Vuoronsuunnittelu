@@ -2,6 +2,7 @@ package app.shifter.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,25 @@ public class WorkdayService {
     @Autowired
     private EmployeeService employeeService;
 
+
     public WorkdayDTO createOrGetWorkday(LocalDate date) {
         Workday workday = workdayRepository.findByDate(date)
                 .orElseGet(() -> {
                     Workday newWorkday = new Workday(date);
-                    // createPredefinedShifts(newWorkday); // Korjaa
-                    return workdayRepository.save(newWorkday);
+
+                    workdayRepository.save(newWorkday);
+                    
+                    ShiftIdListDTO shiftIdListDTO = new ShiftIdListDTO();
+                    List<Long> shiftIds = createPredefinedShifts(newWorkday);
+
+                    
+                    shiftIdListDTO.setShiftIds(shiftIds);
+                    
+                    WorkdayDTO newWorkdayDTO = workdayMapper.workdayToWorkdayDTO(newWorkday);
+
+                    addShiftsToWorkday(newWorkdayDTO, shiftIds);
+    
+                    return newWorkday;
                 });
         return workdayMapper.workdayToWorkdayDTO(workday);
     }
@@ -52,30 +66,38 @@ public class WorkdayService {
         return workdayMapper.workdayToWorkdayDTO(savedWorkday);
     }
 
-    private void createPredefinedShifts(Workday workday) {
+    private List<Long> createPredefinedShifts(Workday workday) {
+    String[] workstations = { "K1", "K2", "K3", "P1", "IP" };
+    String[] shiftTypes = { "Aamuvuoro", "Välivuoro", "Iltavuoro" };
+    List<Long> shiftIds = new ArrayList<>();
 
-        String[] workstations = { "K1", "K2", "K3", "P1", "IP" };
-        String[] shiftTypes = { "Morning", "Middle", "Evening" };
+    for (String workstation : workstations) {
+        for (String shiftType : shiftTypes) {
+            Shift shift = new Shift();
+            shift.setWorkstation(workstation);
+            shift.setShiftName(shiftType + " Shift");
 
-        for (String workstation : workstations) {
-            for (String shiftType : shiftTypes) {
-                Shift shift = new Shift();
-                shift.setWorkstation(workstation);
-                shift.setShiftName(shiftType + " Shift");
-                if (shiftType.equals("Morning")) {
-                    shift.setStartTime(LocalTime.of(8, 0));
-                    shift.setEndTime(LocalTime.of(12, 0));
-                } else if (shiftType.equals("Middle")) {
-                    shift.setStartTime(LocalTime.of(12, 0));
-                    shift.setEndTime(LocalTime.of(16, 0));
-                } else if (shiftType.equals("Evening")) {
-                    shift.setStartTime(LocalTime.of(16, 0));
-                    shift.setEndTime(LocalTime.of(20, 0));
-                }
-                workday.getShifts().add(shift);
+            // Set shift start and end times based on type
+            if (shiftType.equals("Aamuvuoro")) {
+                shift.setStartTime(LocalTime.of(8, 0));
+                shift.setEndTime(LocalTime.of(12, 0));
+            } else if (shiftType.equals("Välivuoro")) {
+                shift.setStartTime(LocalTime.of(12, 0));
+                shift.setEndTime(LocalTime.of(16, 0));
+            } else if (shiftType.equals("Iltavuoro")) {
+                shift.setStartTime(LocalTime.of(16, 0));
+                shift.setEndTime(LocalTime.of(20, 0));
             }
+
+            
+            shift.setWorkday(workday);
+            shift = shiftRepository.save(shift);  
+            shiftIds.add(shift.getShiftId());     
         }
     }
+    return shiftIds;
+}
+
 
     public WorkdayDTO getCurrentWorkDay() {
         LocalDate today = LocalDate.now();
@@ -105,12 +127,18 @@ public class WorkdayService {
         return workdayMapper.workdayToWorkdayDTO(updatedWorkday);
     }
 
-    public WorkdayDTO addShiftsToWorkday(WorkdayDTO workdayDTO, ShiftIdListDTO shiftIdListDTO) {
+    
+
+    public WorkdayDTO addShiftsToWorkday(WorkdayDTO workdayDTO, List<Long> shiftIds) {
         Workday workday = workdayMapper.workdayDTOToWorkday(workdayDTO);
+
+        if (shiftIds == null || shiftIds.isEmpty()) {
+            throw new IllegalArgumentException("Shift IDs list is empty or null.");
+        }
 
         workday.getShifts().clear();
 
-        for (Long shiftId : shiftIdListDTO.getShiftIds()) {
+        for (Long shiftId : shiftIds) {
             Shift shift = shiftRepository.findById(shiftId)
                     .orElseThrow(() -> new RuntimeException("Shift not found with ID: " + shiftId));
 
@@ -156,4 +184,15 @@ public class WorkdayService {
         EmployeeDTO employee = employeeService.getEmployeeById(employeeId);
         shift.setEmployee(employee);
     }
+
+    public boolean deleteWorkday(Long workdayId) {
+        if (workdayRepository.existsById(workdayId)) {
+            workdayRepository.deleteById(workdayId);
+        } else { 
+            throw new RuntimeException("Workday not found");
+    }
+        return false;
+
+    }
+
 }

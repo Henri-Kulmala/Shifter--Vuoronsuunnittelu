@@ -7,4 +7,5 @@ import app.shifter.domain.Workday;
 
 public interface WorkdayRepository extends JpaRepository<Workday, Long> {
     Optional<Workday> findByDate(LocalDate date);
+    Optional<Workday> deleteByDate(LocalDate date);
 }
