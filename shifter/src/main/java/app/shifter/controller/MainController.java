@@ -46,7 +46,54 @@ public class MainController {
         return "index";
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping("/schedule/{date}")
+    public String schedulePage(@PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, Model model) {
+        
+        if (date == null) {
+            date = LocalDate.now();
+        }
+        
+        WorkdayDTO workdaySchedule = workdayService.getWorkdayByDate(date);
+        boolean showSchedule = (workdaySchedule != null && workdaySchedule.getShifts() != null && !workdaySchedule.getShifts().isEmpty());
+
+        if (workdaySchedule == null) {
+            model.addAttribute("showSchedule", false);
+            model.addAttribute("error", "No workday available for the selected date.");
+            
+        } else {
+            model.addAttribute("showSchedule", true);
+            model.addAttribute("error", "No workday available for the selected date.");
+        
+            List<EmployeeDTO> employees = employeeService.getAllEmployees();
+            List<ShiftDTO> shifts = workdaySchedule.getShifts();
+    
+            Map<String, List<ShiftDTO>> shiftsByWorkstation = shifts.stream()
+                    .collect(Collectors.groupingBy(
+                            ShiftDTO::getWorkstation,
+                            Collectors.collectingAndThen(
+                                    Collectors.toList(),
+                                    list -> list.stream()
+                                            .sorted(Comparator.comparing(ShiftDTO::getStartTime))
+                                            .collect(Collectors.toList()))));
+    
+            List<String> workstations = shifts.stream()
+                    .map(ShiftDTO::getWorkstation)
+                    .distinct()
+                    .collect(Collectors.toList());
+    
+            model.addAttribute("workday", workdaySchedule);
+            model.addAttribute("shiftsByWorkstation", shiftsByWorkstation);
+            model.addAttribute("shifts", shifts);
+            model.addAttribute("employees", employees);
+            model.addAttribute("dayOfWeek", workdayService.getDayOfWeek(workdaySchedule.getDate()));
+            model.addAttribute("workstations", workstations);
+        };
+    
+        model.addAttribute("showSchedule", showSchedule);
+        return "schedule";
+    }
+
+  
     @GetMapping("/shiftplanner/{date}")
     public String getWorkday(@PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, Model model) {
         WorkdayDTO workday = workdayService.getWorkdayByDate(date);
@@ -105,11 +152,22 @@ public class MainController {
             @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
             @RequestParam Map<String, String> shiftEmployeeMap) {
 
-        for (Map.Entry<String, String> entry : shiftEmployeeMap.entrySet()) {
-            Long shiftId = Long.parseLong(entry.getKey());
-            Long employeeId = Long.parseLong(entry.getValue());
-            shiftService.assignEmployee(shiftId, employeeId);
-        }
+                shiftEmployeeMap.entrySet().stream()
+                .filter(entry -> {
+                    try {
+                        Long.parseLong(entry.getKey());
+                        Long.parseLong(entry.getValue());
+                        return true;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                })
+                .forEach(entry -> {
+                    Long shiftId = Long.parseLong(entry.getKey());
+                    Long employeeId = Long.parseLong(entry.getValue());
+                    shiftService.assignEmployee(shiftId, employeeId);
+                });
+        
 
         
         return new RedirectView("/shiftplanner/{date}");
