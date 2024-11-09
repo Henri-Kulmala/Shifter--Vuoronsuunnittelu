@@ -28,7 +28,7 @@ public class WorkdayController {
         return new ResponseEntity<>(workdayDTO, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/{date}/shift")
     public ResponseEntity<WorkdayDTO> patchWorkdayAddShift(
             @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
@@ -44,7 +44,7 @@ public class WorkdayController {
         return new ResponseEntity<>(updatedWorkday, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @GetMapping("/{date}")
     public ResponseEntity<WorkdayDTO> getWorkdayByDate(
             @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
@@ -55,14 +55,14 @@ public class WorkdayController {
         return new ResponseEntity<>(workdayDTO, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @GetMapping
     public ResponseEntity<List<WorkdayDTO>> getAllWorkdays() {
         List<WorkdayDTO> workdays = workdayService.getAllWorkdays();
         return new ResponseEntity<>(workdays, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{date}/shift")
     public ResponseEntity<WorkdayDTO> addShiftsToWorkday(
             @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
@@ -81,7 +81,7 @@ public class WorkdayController {
         return new ResponseEntity<>(updatedWorkday, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkday(@PathVariable Long id) {
         boolean isDeleted = workdayService.deleteWorkday(id);

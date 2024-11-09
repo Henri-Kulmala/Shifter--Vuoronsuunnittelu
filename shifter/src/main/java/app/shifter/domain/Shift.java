@@ -53,7 +53,6 @@ public class Shift {
     @ElementCollection
     private List<Break> breaks;
 
-    // Tälle vuorolle määrätty työntekijä
 
     public Shift() {
     }

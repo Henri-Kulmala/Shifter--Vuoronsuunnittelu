@@ -20,7 +20,6 @@ import app.shifter.exceptionHandling.Exceptions.OutOfWorkingHoursException;
 import app.shifter.exceptionHandling.Exceptions.ShiftConflictException;
 
 import app.shifter.mappers.BreakMapper;
-import app.shifter.mappers.EmployeeMapper;
 import app.shifter.mappers.ShiftMapper;
 import app.shifter.repositories.EmployeeRepository;
 import app.shifter.repositories.ShiftRepository;
@@ -32,16 +31,11 @@ public class ShiftService {
     private ShiftRepository shiftRepository;
 
     @Autowired
-    private EmployeeService employeeService;
-
-    @Autowired
     private ShiftMapper shiftMapper;
 
     @Autowired
     private BreakMapper breakMapper;
 
-    @Autowired
-    private EmployeeMapper employeeMapper;
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -180,7 +174,7 @@ public class ShiftService {
                     existingShift.setBreaks(breakMapper.breakDTOListToBreakList(updatedBreaks));
                     break;
                 case "employee":
-                    Long employeeId = Long.parseLong(value.toString()); // Assuming value is directly the employee ID
+                    Long employeeId = Long.parseLong(value.toString());
                     Employee employee = employeeRepository.findById(employeeId)
                             .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + employeeId));
                     validateQualification(employee, existingShift.getWorkstation());
@@ -212,7 +206,5 @@ public class ShiftService {
         return shiftMapper.shiftToShiftDTO(existingShift);
 
     }
-
-    
 
 }
