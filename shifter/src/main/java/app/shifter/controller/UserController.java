@@ -18,11 +18,8 @@ import java.util.Map;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private EmployeeService employeeService;
@@ -45,7 +42,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
         if (userDTO.getEmployee() != null && userDTO.getEmployee().getEmployeeId() != null) {

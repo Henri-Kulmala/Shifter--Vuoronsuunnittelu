@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +32,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Autowired
+    @Lazy
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -42,17 +44,16 @@ public class UserService implements UserDetailsService {
         UserDetails user = new org.springframework.security.core.userdetails.User(username,
                 curruser.getPasswordHash(),
                 AuthorityUtils.createAuthorityList(curruser.getRole()));
+
+                System.out.println("----THIS IS YOUR ROLE: " + curruser.getRole());
         return user;
     }
 
     public UserDTO createUser(UserDTO userDTO, String password) {
         User user = UserMapper.INSTANCE.userDTOToUser(userDTO);
 
-        // Hash the password before storing
         String hashedPassword = passwordEncoder.encode(password);
         user.setPasswordHash(hashedPassword);
-
-        // Set roles by looking them up in the database
         String role = userDTO.getRole();
         user.setRole(role);
 
