@@ -8,7 +8,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -17,21 +16,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                    .requestMatchers("/login", "/resources/**").permitAll()
-                    .requestMatchers("/api/**", "/shiftplanner/**").hasAuthority("ADMIN")
-                    .anyRequest().authenticated()
+                                .requestMatchers("/login", "/resources/**").permitAll()
+                                .requestMatchers("/api/**", "/shiftplanner/**").hasAuthority("ADMIN")
+                                .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                    .loginPage("/login")
-                    .permitAll()
-                    .defaultSuccessUrl("/index", true)
+                                .loginPage("/login")
+                                .permitAll()
+                                .defaultSuccessUrl("/index", true)
                 )
                 .logout(logout -> logout
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
-                    .logoutSuccessUrl("/login")
-                    .permitAll()
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID")
+                                .logoutSuccessUrl("/login")
+                                .permitAll()
                 )
                 .csrf(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
