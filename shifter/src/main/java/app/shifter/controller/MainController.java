@@ -97,6 +97,8 @@ public class MainController {
     @GetMapping("/shiftplanner/{date}")
     public String getWorkday(@PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, Model model) {
         WorkdayDTO workday = workdayService.getWorkdayByDate(date);
+
+
         
         if (workday == null) {
             workday = workdayService.createOrGetWorkday(date);

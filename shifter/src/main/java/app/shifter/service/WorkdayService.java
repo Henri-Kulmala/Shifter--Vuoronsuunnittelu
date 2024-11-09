@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import app.shifter.DTOs.WorkdayDTO;
+import app.shifter.DTOs.BreakDTO;
 import app.shifter.DTOs.EmployeeDTO;
 import app.shifter.DTOs.ShiftDTO;
 import app.shifter.DTOs.ShiftIdListDTO;
+import app.shifter.mappers.BreakMapper;
 import app.shifter.mappers.WorkdayMapper;
 import app.shifter.repositories.ShiftRepository;
 import app.shifter.repositories.WorkdayRepository;
@@ -34,6 +36,11 @@ public class WorkdayService {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private ShiftService shiftService;
+
+    @Autowired
+    private BreakMapper breakMapper;
 
     public WorkdayDTO createOrGetWorkday(LocalDate date) {
         Workday workday = workdayRepository.findByDate(date)
@@ -75,22 +82,23 @@ public class WorkdayService {
         for (String shiftType : shiftTypes) {
             Shift shift = new Shift();
             shift.setWorkstation(workstation);
-            shift.setShiftName(shiftType + " Shift");
+            shift.setShiftName(shiftType);
 
-            // Set shift start and end times based on type
             if (shiftType.equals("Aamuvuoro")) {
-                shift.setStartTime(LocalTime.of(8, 0));
-                shift.setEndTime(LocalTime.of(12, 0));
+                shift.setStartTime(LocalTime.of(7, 0));
+                shift.setEndTime(LocalTime.of(14, 0));
             } else if (shiftType.equals("Välivuoro")) {
-                shift.setStartTime(LocalTime.of(12, 0));
-                shift.setEndTime(LocalTime.of(16, 0));
+                shift.setStartTime(LocalTime.of(11, 0));
+                shift.setEndTime(LocalTime.of(19, 0));
             } else if (shiftType.equals("Iltavuoro")) {
-                shift.setStartTime(LocalTime.of(16, 0));
-                shift.setEndTime(LocalTime.of(20, 0));
+                shift.setStartTime(LocalTime.of(15, 0));
+                shift.setEndTime(LocalTime.of(23, 0));
             }
 
             
             shift.setWorkday(workday);
+            List<BreakDTO> calculatedBreaks = shiftService.calculateBreaks(shift.getStartTime(), shift.getEndTime());
+            shift.setBreaks(breakMapper.breakDTOListToBreakList(calculatedBreaks));
             shift = shiftRepository.save(shift);  
             shiftIds.add(shift.getShiftId());     
         }
