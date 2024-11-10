@@ -19,7 +19,7 @@
 </head>
 
 <body>
-    <div th:replace="/fragments/all.html :: nav-bar "></div>
+    <div th:replace="fragments/all.html :: nav-bar "></div>
 
     <div class="container mt-5">
         <h2 class="text-center" th:text="${workday.date} + ' ' + ${dayOfWeek}">Workday</h2>

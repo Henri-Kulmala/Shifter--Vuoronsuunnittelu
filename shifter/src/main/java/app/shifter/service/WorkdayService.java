@@ -47,7 +47,7 @@ public class WorkdayService {
                 .orElseGet(() -> {
                     Workday newWorkday = new Workday(date);
 
-                    workdayRepository.save(newWorkday);
+                    workdayRepository.saveAndFlush(newWorkday);
                     
                     ShiftIdListDTO shiftIdListDTO = new ShiftIdListDTO();
                     List<Long> shiftIds = createPredefinedShifts(newWorkday);
