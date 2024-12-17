@@ -1,12 +1,18 @@
 # Shifter
 ---
 
+## Back-end palvelin
+Front-end palvelin löytyy osoitteesta : 
+
 ## Vuoronsuunnittelutyökalu kaupan työtehtäviin
 
 
 Shifter on tarkoitettu kokonaisvaltaiseen työvuorojen hallinnointiin sekä suunnitteluun kaupan alalla.
 
-<details open>
+
+
+
+<details>
 <summary> Tietokannan DDL- komennot </summary>
 
 ## Employee
