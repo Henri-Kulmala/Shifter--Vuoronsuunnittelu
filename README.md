@@ -2,7 +2,7 @@
 ---
 
 ## Back-end palvelin
-Front-end palvelin löytyy osoitteesta : 
+Front-end palvelin löytyy osoitteesta :  https://github.com/Henri-Kulmala/Shifter-App-React-Client
 
 ## Vuoronsuunnittelutyökalu kaupan työtehtäviin
 
