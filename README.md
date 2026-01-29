@@ -1,131 +1,179 @@
-# Shifter
+# Shifter – Shift Planning Backend
+
+Shifter is a Java Spring Boot backend application built to support workforce shift planning and employee management in a retail environment.  
+The application was developed as part of a university course and designed around a real workplace use case.
+
+The backend is responsible for authentication, authorization, business logic, data persistence, and RESTful APIs consumed by a separate frontend client.
+Frontend-application can be found from [Shifter-App-React-Client](https://github.com/Henri-Kulmala/Shifter-App-React-Client).
+
 ---
 
-## Back-end palvelin
-Front-end palvelin löytyy osoitteesta :  https://github.com/Henri-Kulmala/Shifter-App-React-Client
+## Purpose & Use Case
 
-## Vuoronsuunnittelutyökalu kaupan työtehtäviin
+The system is designed for store managers to:
+- Plan daily work shifts
+- Assign employees to shifts and workstations
+- Define working hours and breaks
+- Manage users and employee data
+- Persist workday data for scheduling and reporting
+- Support exporting shift data for sharing (PDF handled by frontend)
 
+The application models an internal management tool rather than a public-facing service.
 
-Shifter on tarkoitettu kokonaisvaltaiseen työvuorojen hallinnointiin sekä suunnitteluun kaupan alalla.
+---
 
+## Tech Stack
 
+- Java
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Maven
+- MySQL
+- Docker
+- JUnit / SpringBootTest
 
+---
 
-<details>
-<summary> Tietokannan DDL- komennot </summary>
+## Architecture Overview
 
-## Employee
+The backend follows a layered architecture:
 
+- **Controllers**  
+  Handle RESTful HTTP requests and responses
+
+- **Services**  
+  Contain business logic and validation
+
+- **Repositories**  
+  Data access layer using Spring Data JPA
+
+- **DTOs & Mapping**  
+  Used to separate persistence models from API-facing data structures
+
+- **Exception Handling**  
+  Centralized error handling for runtime and validation errors
+
+---
+
+## Security & Authentication
+
+Authentication is implemented using Spring Security with session-based login.
+
+Key characteristics:
+- Form-based authentication
+- Session handling via `JSESSIONID`
+- BCrypt password hashing
+- Role-based authorization
+- CSRF protection enabled
+
+Authorization rules:
+- Public access: `/login`, `/resources/**`
+- Restricted access: `/api/**`, `/shiftplanner/**` (ADMIN only)
+- All other requests require authentication
+
+---
+
+## Database Schema
+
+The application uses a relational MySQL database.  
+The schema is designed to model employees, users, workdays, shifts, and break coverage.
+
+### Core Tables
+
+#### Employee
+Stores employee information used for shift assignment.
 ```sql
-CREATE TABLE `employee` (
-`employee_id` bigint NOT NULL AUTO_INCREMENT, 
-  `first_name` varchar(255) NOT NULL,
-  `last_name` varchar(255) NOT NULL,
-  `qualification` tinyint(1) DEFAULT NULL,
-  `notes` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`employee_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-</br>
-```
+CREATE TABLE employee (
+  employee_id BIGINT NOT NULL AUTO_INCREMENT,
+  first_name VARCHAR(255) NOT NULL,
+  last_name VARCHAR(255) NOT NULL,
+  qualification TINYINT(1),
+  notes VARCHAR(255),
+  PRIMARY KEY (employee_id)
+);
+````
+#### User
+````sql
+CREATE TABLE user (
+  user_id BIGINT NOT NULL AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role VARCHAR(255),
+  employee_id BIGINT,
+  PRIMARY KEY (user_id),
+  UNIQUE (username),
+  FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+);
+````
 
-## Shift
+#### Workday
+````sql
+CREATE TABLE workday (
+  id BIGINT NOT NULL AUTO_INCREMENT,
+  date DATE NOT NULL,
+  PRIMARY KEY (id)
+);
 
-```sql
-CREATE TABLE `shift` (
-  `shiftid` bigint NOT NULL AUTO_INCREMENT,
-  `end_time` time(6) NOT NULL,
-  `shift_name` varchar(255) DEFAULT NULL,
-  `start_time` time(6) NOT NULL,
-  `workstation` varchar(255) DEFAULT NULL,
-  `covering_shift_id` bigint DEFAULT NULL,
-  `employee_id` bigint DEFAULT NULL,
-  `workday_id` bigint DEFAULT NULL,
-  `cover_employee_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`shiftid`),
-  KEY `FKjrfmr5opgjhasm3k4fbsbit1` (`covering_shift_id`),
-  KEY `FKg9ycreft1sv2jjvkno3dn3fqy` (`employee_id`),
-  KEY `FKh8pt2aph03ljh1as32yxj6fhn` (`workday_id`),
-  KEY `FKppr81iylo5hdb72wxxvm547gg` (`cover_employee_id`),
-  CONSTRAINT `FKg9ycreft1sv2jjvkno3dn3fqy` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`),
-  CONSTRAINT `FKh8pt2aph03ljh1as32yxj6fhn` FOREIGN KEY (`workday_id`) REFERENCES `workday` (`id`),
-  CONSTRAINT `FKjrfmr5opgjhasm3k4fbsbit1` FOREIGN KEY (`covering_shift_id`) REFERENCES `shift` (`shiftid`),
-  CONSTRAINT `FKppr81iylo5hdb72wxxvm547gg` FOREIGN KEY (`cover_employee_id`) REFERENCES `employee` (`employee_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=223 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-```
+````
 
-### Shifts (DTO)
+#### Shift
+````sql
+CREATE TABLE shift (
+  shiftid BIGINT NOT NULL AUTO_INCREMENT,
+  start_time TIME(6) NOT NULL,
+  end_time TIME(6) NOT NULL,
+  shift_name VARCHAR(255),
+  workstation VARCHAR(255),
+  employee_id BIGINT,
+  workday_id BIGINT,
+  covering_shift_id BIGINT,
+  cover_employee_id BIGINT,
+  PRIMARY KEY (shiftid),
+  FOREIGN KEY (employee_id) REFERENCES employee(employee_id),
+  FOREIGN KEY (workday_id) REFERENCES workday(id),
+  FOREIGN KEY (covering_shift_id) REFERENCES shift(shiftid),
+  FOREIGN KEY (cover_employee_id) REFERENCES employee(employee_id)
+);
 
-```sql
-CREATE TABLE `shifts` (
-  `shift_id` bigint NOT NULL AUTO_INCREMENT,
-  `workstation` varchar(255) DEFAULT NULL,
-  `shift_name` varchar(255) DEFAULT NULL,
-  `start_time` datetime DEFAULT NULL,
-  `end_time` datetime DEFAULT NULL,
-  `employee_id` bigint DEFAULT NULL,
-  `covering_shift_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`shift_id`),
-  KEY `covering_shift_id` (`covering_shift_id`),
-  KEY `shifts_ibfk_1` (`employee_id`),
-  CONSTRAINT `shifts_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`) ON DELETE SET NULL,
-  CONSTRAINT `shifts_ibfk_2` FOREIGN KEY (`covering_shift_id`) REFERENCES `shifts` (`shift_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-```
+````
+## DTO-Oriented shifts
+Some tables exist primarily to support DTO mapping and data transfer.
 
-
-
-### Shift_Breaks (DTO)
-
-```sql
-CREATE TABLE `shift_breaks` (
-  `shift_shiftid` bigint NOT NULL,
-  `break_end` time(6) NOT NULL,
-  `break_start` time(6) NOT NULL,
-  `break_type` varchar(255) DEFAULT NULL,
-  `cover_employee_id` bigint DEFAULT NULL,
-  `break_cover_employee_employee_id` bigint DEFAULT NULL,
-  `cover_employee_employee_id` bigint DEFAULT NULL,
-  KEY `FK554k1alyci9osn1890b736fd2` (`shift_shiftid`),
-  KEY `FKe8xj1ok6xcoo4jwhxqtgybshc` (`break_cover_employee_employee_id`),
-  KEY `FKbex8xbun97bjv2dkf7owj2te7` (`cover_employee_employee_id`),
-  CONSTRAINT `FK554k1alyci9osn1890b736fd2` FOREIGN KEY (`shift_shiftid`) REFERENCES `shift` (`shiftid`),
-  CONSTRAINT `FKbex8xbun97bjv2dkf7owj2te7` FOREIGN KEY (`cover_employee_employee_id`) REFERENCES `employee` (`employee_id`),
-  CONSTRAINT `FKe8xj1ok6xcoo4jwhxqtgybshc` FOREIGN KEY (`break_cover_employee_employee_id`) REFERENCES `employee` (`employee_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-```
+#### Shifts (DTO)
+````sql
+CREATE TABLE shifts (
+  shift_id BIGINT NOT NULL AUTO_INCREMENT,
+  workstation VARCHAR(255),
+  shift_name VARCHAR(255),
+  start_time DATETIME,
+  end_time DATETIME,
+  employee_id BIGINT,
+  covering_shift_id BIGINT,
+  PRIMARY KEY (shift_id),
+  FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE SET NULL,
+  FOREIGN KEY (covering_shift_id) REFERENCES shifts(shift_id)
+);
 
 
+````
+
+#### Shift Breaks (DTO)
+````sql
+CREATE TABLE shift_breaks (
+  shift_shiftid BIGINT NOT NULL,
+  break_start TIME(6) NOT NULL,
+  break_end TIME(6) NOT NULL,
+  break_type VARCHAR(255),
+  cover_employee_employee_id BIGINT,
+  FOREIGN KEY (shift_shiftid) REFERENCES shift(shiftid),
+  FOREIGN KEY (cover_employee_employee_id) REFERENCES employee(employee_id)
+);
 
 
-## User
-
-```sql
-CREATE TABLE `user` (
-  `user_id` bigint NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
-  `password_hash` varchar(255) NOT NULL,
-  `role` varchar(255) DEFAULT NULL,
-  `employee_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `username` (`username`),
-  KEY `employee_id` (`employee_id`),
-  CONSTRAINT `user_ibfk_1` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-```
+````
 
 
-## Workday
-
-```sql
-CREATE TABLE `workday` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `date` date NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-```
-
-</details>
 
 
 
