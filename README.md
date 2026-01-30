@@ -172,8 +172,57 @@ CREATE TABLE shift_breaks (
 
 
 ````
+---
+
+## Testing 
+The project includes backend testing using:
+
+- @SpringBootTest
+- Integration-level tests
+- Validation of service and repository behavior
+
+---
+
+## Build & Run (Local)
+#### Requirements
+- Java 17+ (or compatible version)
+- Maven
+- MySQL
+- Docker (optional)
+
+#### Build 
+```` bash
+mvn clean package
+````
 
 
+#### Run 
+```` bash
+mvn spring-boot:run
+````
+
+
+#### Docker (optional) 
+```` bash
+docker build -t shifter-backend .
+docker run -p 8080:8080 shifter-backend
+````
+---
+
+## Environment Configuration
+The application expects standard Spring environment variables, such as:
+
+- Database URL
+- Database username
+- Database password
+
+These are typically provided via application.properties or environment variables.
+
+---
+
+## Project Status 
+This project was developed for educational and portfolio purposes.
+While based on a real workplace use case, it is not actively maintained for production deployment.
 
 
 
