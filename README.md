@@ -1,10 +1,21 @@
 # Shifter – Shift Planning Backend
 
+<br/>
+Frontend-application can be found from:
+<br/>
+<br/>
+
+
+[![Static Badge](https://img.shields.io/badge/ShifterApp?style=for-the-badge&labelColor=Green&link=https%3A%2F%2Fgithub.com%2FHenri-Kulmala%2FShifter-App-React-Client)](https://img.shields.io/badge/Shifter-app?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2FHenri-Kulmala%2FShifter-App-React-Client
+)
+
+
+
+<br/>
 Shifter is a Java Spring Boot backend application built to support workforce shift planning and employee management in a retail environment.  
 The application was developed as part of a university course and designed around a real workplace use case.
 
-The backend is responsible for authentication, authorization, business logic, data persistence, and RESTful APIs consumed by a separate frontend client.
-Frontend-application can be found from [Shifter-App-React-Client](https://github.com/Henri-Kulmala/Shifter-App-React-Client).
+The backend is responsible for authentication, authorization, business logic, data persistence, and RESTful APIs consumed by a separate frontend client. 
 
 ---
 
