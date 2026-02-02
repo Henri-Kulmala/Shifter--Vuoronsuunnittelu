@@ -5,9 +5,11 @@ Frontend-application can be found from:
 <br/>
 <br/>
 
+<a href="https://github.com/Henri-Kulmala/Shifter-App-React-Client">
+<img alt="Static Badge" src="https://img.shields.io/badge/-Shifter%20React%20Application-green?style=flat" >
+</a>
 
-![Static Badge](https://img.shields.io/badge/Shifter-App-green?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2FHenri-Kulmala%2FShifter-App-React-Client)
-
+<br/>
 
 <br/>
 Shifter is a Java Spring Boot backend application built to support workforce shift planning and employee management in a retail environment.  
