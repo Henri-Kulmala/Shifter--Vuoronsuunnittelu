@@ -6,10 +6,7 @@ Frontend-application can be found from:
 <br/>
 
 
-[[![Static Badge](https://img.shields.io/badge/ShifterApp?style=for-the-badge&labelColor=Green&link=https%3A%2F%2Fgithub.com%2FHenri-Kulmala%2FShifter-App-React-Client)](https://img.shields.io/badge/Shifter-app?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2FHenri-Kulmala%2FShifter-App-React-Client
-)
-](https://img.shields.io/badge/Shifter-App-green?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2FHenri-Kulmala%2FShifter-App-React-Client
-)
+![Static Badge](https://img.shields.io/badge/Shifter-App-green?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2FHenri-Kulmala%2FShifter-App-React-Client)
 
 
 <br/>
